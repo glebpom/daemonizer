@@ -1,3 +1,6 @@
+require 'rubygems'
+require 'rubygems/specification'
+
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gemspec|
@@ -11,4 +14,36 @@ begin
   Jeweler::GemcutterTasks.new
 rescue LoadError
   puts "Jeweler not available. Install it with: gem install jeweler"
+end
+
+begin
+  require 'spec/rake/spectask'
+rescue LoadError
+  raise 'Run `gem install rspec` to be able to run specs'
+else
+  task :clear_tmp do
+    FileUtils.rm_rf(File.expand_path("../tmp", __FILE__))
+  end
+
+  desc "Run specs"
+  Spec::Rake::SpecTask.new do |t|
+    t.spec_files = FileList['spec/**/*_spec.rb']
+    t.spec_opts  = %w(-fs --color)
+    t.warning    = true
+  end
+  task :spec
+end
+
+begin
+  require 'yard'
+  YARD::Rake::YardocTask.new(:yard) do |t|
+    t.options = ['--title', 'Loops Documentation']
+    if ENV['PRIVATE']
+      t.options.concat ['--protected', '--private']
+    else
+      t.options.concat ['--protected', '--no-private']
+    end
+  end
+rescue LoadError
+  puts 'Yard not available. Install it with: sudo gem install yard'
 end
