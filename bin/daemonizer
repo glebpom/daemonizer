@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+$:.unshift(File.dirname(__FILE__) + '/../lib') unless $:.include?(File.dirname(__FILE__) + '/../lib')
+
+require File.dirname(__FILE__) + '/../lib/daemonizer'
+
+$thor_runner = false 
+
+Daemonizer::CLI.start

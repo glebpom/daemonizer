@@ -9,16 +9,21 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Gleb Pomykalov"]
-  s.date = %q{2010-06-28}
-  s.description = %q{Inspired by bundler. Mostly build on top of Alexey Kovyrin's loops code. http://github.com/kovyrin/loops}
+  s.date = %q{2010-07-05}
+  s.description = %q{Inspired by bundler and rack. Mostly built on top of Alexey Kovyrin's loops code. http://github.com/kovyrin/loops}
   s.email = %q{glebpom@gmail.com}
+  s.executables = ["daemonizer", "daemonizer-memory-stats"]
   s.extra_rdoc_files = [
     "README"
   ]
   s.files = [
     "README",
      "Rakefile",
-     "VERSION"
+     "VERSION",
+     "daemonizer.gemspec",
+     "spec/daemonizer_spec.rb",
+     "spec/spec.opts",
+     "spec/spec_helper.rb"
   ]
   s.homepage = %q{http://github.com/glebpom/daemonizer}
   s.rdoc_options = ["--charset=UTF-8"]
@@ -26,8 +31,8 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{Daemonizer allows you to easily create custom daemons on ruby. Supporting preforked and threaded models.}
   s.test_files = [
-    "spec/spec_helper.rb",
-     "spec/ttt_spec.rb"
+    "spec/daemonizer_spec.rb",
+     "spec/spec_helper.rb"
   ]
 
   if s.respond_to? :specification_version then
@@ -35,9 +40,12 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
+      s.add_runtime_dependency(%q<log4r>, [">= 1.1.8"])
     else
+      s.add_dependency(%q<log4r>, [">= 1.1.8"])
     end
   else
+    s.add_dependency(%q<log4r>, [">= 1.1.8"])
   end
 end
 

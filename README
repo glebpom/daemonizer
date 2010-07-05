@@ -1,0 +1,23 @@
+Demfile example:
+
+
+engine :prefork #:threaded
+
+monitor
+
+pool :beanstalkd do
+  workers 4
+  
+  before_init do |logger, block|
+    logger.info "Preparing master process"
+    block.call
+  end
+
+  after_init do |logger, worker_id, workers_count|
+    logger.info "Started #{worker_id}/#{workers_count}"
+    EM.run {
+      Qik::Agent.process(worker_id, workers_count)
+    }
+    logger.info "Stopped #{worker_id}/#{workers_count}"
+  end
+end
