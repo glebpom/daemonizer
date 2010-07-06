@@ -71,10 +71,20 @@ module Daemonizer
       invoke :start, pool_name
     end
 
-    desc "status", "Print pool status"
-    def status(pool_name = nil)
-      return true
-    end
+    desc "debug", "Debug pool (do not demonize)"
+    def debug(pool_name = nil)
+      puts "You should supply pool_name to debug" if pool_name.nil?
+      control_pools_loop(pool_name, "execution ended", options[:demfile]) do |pool|
+        STDOUT.sync = true
+        print_pool pool.name,  "Debugging pool: "
+        
+        engine = Engine.new(pool)
+        engine.debug!
+        
+        print_pool pool.name,  " Done!"
+        exit(0)
+      end
+      return true    end
     
   private
     def control_pools_loop(pool_name, message = nil, demfile = nil, &block)
