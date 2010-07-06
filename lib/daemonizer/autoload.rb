@@ -1,6 +1,6 @@
 module Daemonizer
   # @private
-  def self.__p(*path) File.join('lib/daemonizer', *path) end
+  def self.__p(*path) File.join(File.dirname(File.expand_path(__FILE__)), *path) end
 
   autoload :Config,         __p('config')
   autoload :Dsl,            __p('dsl')

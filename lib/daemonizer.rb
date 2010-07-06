@@ -8,14 +8,14 @@ include Log4r
 
 module Daemonizer
   
-  def self.report_fatal_error(error, logger)
-    if logger
-      logger.fatal error
-      exit 1
-    else
-      raise error
-    end
+  def self.root=(value)
+    @@root = value
   end
+
+  def self.root
+    @@root
+  end
+
 end
 
-require File.join('lib/daemonizer/autoload')
+require File.dirname(__FILE__) + '/../lib/daemonizer/autoload'

@@ -1,23 +1,48 @@
-Demfile example:
+engine :fork 
+workers 2
 
-
-engine :prefork #:threaded
-
-monitor
-
-pool :beanstalkd do
+pool :daemonizer do
   workers 4
+  poll_period 5
+  log_file "log/daemonizer.log" #relative to Demfile
   
   before_init do |logger, block|
-    logger.info "Preparing master process"
     block.call
   end
+  
+  after_init do |logger, worker_id, workers_count|
+    logger.info "Started #{worker_id} from #{workers_count}"
+    
+    exit = false
+    
+    stop = proc {
+      exit = true
+    }
 
+    trap('TERM', stop)
+    trap('INT', stop)
+    trap('EXIT', stop)
+    
+    loop do
+      break if exit
+      logger.info "Ping #{worker_id}"
+      sleep 10
+    end
+    
+    true
+  end
+end
+
+pool :new_daemonizer do
+
+  before_init do |logger, block|
+    logger.info "New: Preparing master process"
+    block.call
+  end
+  
   after_init do |logger, worker_id, workers_count|
     logger.info "Started #{worker_id}/#{workers_count}"
-    EM.run {
-      Qik::Agent.process(worker_id, workers_count)
-    }
+    sleep 1
     logger.info "Stopped #{worker_id}/#{workers_count}"
   end
 end

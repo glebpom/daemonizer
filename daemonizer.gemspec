@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.date = %q{2010-07-05}
   s.description = %q{Inspired by bundler and rack. Mostly built on top of Alexey Kovyrin's loops code. http://github.com/kovyrin/loops}
   s.email = %q{glebpom@gmail.com}
-  s.executables = ["daemonizer", "daemonizer-memory-stats"]
+  s.executables = ["daemonizer"]
   s.extra_rdoc_files = [
     "README"
   ]
@@ -20,20 +20,13 @@ Gem::Specification.new do |s|
     "README",
      "Rakefile",
      "VERSION",
-     "daemonizer.gemspec",
-     "spec/daemonizer_spec.rb",
-     "spec/spec.opts",
-     "spec/spec_helper.rb"
+     "daemonizer.gemspec"
   ]
   s.homepage = %q{http://github.com/glebpom/daemonizer}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{Daemonizer allows you to easily create custom daemons on ruby. Supporting preforked and threaded models.}
-  s.test_files = [
-    "spec/daemonizer_spec.rb",
-     "spec/spec_helper.rb"
-  ]
 
   if s.respond_to? :specification_version then
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION

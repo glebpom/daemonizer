@@ -14,7 +14,7 @@ module Daemonizer
     
     def init_logger
       @logger = Logger.new @pool.to_s
-      outputter = FileOutputter.new('log', :filename => @options[:log_file])
+      outputter = FileOutputter.new('log', :filename => self.log_file)
       outputter.formatter = PatternFormatter.new :pattern => "%d - %l %g - %m"
       @logger.outputters = outputter
       @logger.level = INFO
@@ -27,6 +27,7 @@ module Daemonizer
       @options[:workers] ||= 1
       @options[:log_file] ||= "log/#{@pool}.log"
       @options[:poll_period] ||= 5
+      @options[:pid_file] ||= "pid/#{@pool}.pid"
     end
     
     def validate
@@ -40,9 +41,15 @@ module Daemonizer
       Daemonizer.report_fatal_error "Poll period should be more then zero", @logger if @options[:poll_period] < 1
     end
     
-    [:before_init, :engine, :workers, :after_init, :poll_period, :log_file].each do |method|
+    [:before_init, :engine, :workers, :after_init, :poll_period, :root].each do |method|
       define_method method do
         @options[method.to_sym]
+      end
+    end
+        
+    [:log_file, :pid_file].each do |method|
+      define_method method do
+        File.join(Daemonizer.root, @options[method.to_sym])
       end
     end
     
@@ -53,11 +60,6 @@ module Daemonizer
     def logger
       @logger
     end
-    
-    def pid_file
-      "tmp/pid-#{@pool}"
-    end
-
   end
-  
+
 end

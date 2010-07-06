@@ -14,7 +14,7 @@ module Daemonizer
       @pool     = :default
       @configs  = {}
     end
-    
+        
     def poll_period(seconds)
       @options[:poll_period] = seconds.to_i
     end
@@ -37,6 +37,10 @@ module Daemonizer
     
     def after_init(&blk)
       @options[:after_init] = blk
+    end
+    
+    def pid_file(pid)
+      @options[:pid_file] = pid
     end
 
     def pool(name, &blk)

@@ -58,10 +58,6 @@ module Daemonizer
       exit if pid = fork
 
       $0 = app_name if app_name
-
-      #
-      # TODO: check it
-      #Dir.chdir(Daemonizer.root) # Make sure we're in the working directory
       
       File.umask(0000) # Insure sensible umask
 

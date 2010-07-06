@@ -18,24 +18,6 @@ rescue LoadError
 end
 
 begin
-  require 'spec/rake/spectask'
-rescue LoadError
-  raise 'Run `gem install rspec` to be able to run specs'
-else
-  task :clear_tmp do
-    FileUtils.rm_rf(File.expand_path("../tmp", __FILE__))
-  end
-
-  desc "Run specs"
-  Spec::Rake::SpecTask.new do |t|
-    t.spec_files = FileList['spec/**/*_spec.rb']
-    t.spec_opts  = %w(-fs --color)
-    t.warning    = true
-  end
-  task :spec
-end
-
-begin
   require 'yard'
   YARD::Rake::YardocTask.new(:yard) do |t|
     t.options = ['--title', 'Daemonizer Documentation']
