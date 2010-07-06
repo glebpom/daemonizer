@@ -66,12 +66,14 @@ module Daemonizer
     end
 
     desc "restart", "Restart pool"
+    method_option :demfile, :type => :string, :aliases => "-D", :banner => "Path to Demfile"
     def restart(pool_name = nil)
       invoke :stop, pool_name
       invoke :start, pool_name
     end
 
     desc "debug", "Debug pool (do not demonize)"
+    method_option :demfile, :type => :string, :aliases => "-D", :banner => "Path to Demfile"
     def debug(pool_name = nil)
       puts "You should supply pool_name to debug" if pool_name.nil?
       control_pools_loop(pool_name, "execution ended", options[:demfile]) do |pool|
@@ -84,7 +86,8 @@ module Daemonizer
         print_pool pool.name,  " Done!"
         exit(0)
       end
-      return true    end
+      return true    
+    end
     
   private
     def control_pools_loop(pool_name, message = nil, demfile = nil, &block)
@@ -110,7 +113,7 @@ module Daemonizer
         if pool = pools[pool_name.to_sym]
           [pool]
         else
-          print_pool pool_name,  "Pool with name `#{pool_name}` is not configured"
+          print_pool pool_name,  "pool is not configured"
           []
         end
       else

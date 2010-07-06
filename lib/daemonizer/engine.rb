@@ -35,7 +35,9 @@ module Daemonizer
     end
 
     def debug!
-      logger.outputters = Outputter.stdout
+      outputter = Outputter.stdout
+      outputter.formatter = PatternFormatter.new :pattern => "%d - %l %g - %m"
+      logger.outputters = outputter
 
       init_block = Proc.new do
         begin

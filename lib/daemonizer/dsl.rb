@@ -14,6 +14,10 @@ module Daemonizer
       @pool     = :default
       @configs  = {}
     end
+    
+    def handler(handler)
+      @options[:handler] = handler
+    end
         
     def poll_period(seconds)
       @options[:poll_period] = seconds.to_i

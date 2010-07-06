@@ -50,7 +50,7 @@ module Daemonizer
 
       # Detach from the controlling terminal
       unless sess_id = Process.setsid
-        raise Daemons.RuntimeException.new('cannot detach from controlling terminal')
+        raise 'cannot detach from controlling terminal'
       end
 
       # Prevent the possibility of acquiring a controlling terminal
