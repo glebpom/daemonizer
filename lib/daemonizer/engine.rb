@@ -14,12 +14,20 @@ module Daemonizer
       @pm = ProcessManager.new(@config)
 
       init_block = Proc.new do
-        @pm.start_workers do |process_id| 
-          @config.after_init.call(logger, process_id, @config.workers)
+        begin
+          @pm.start_workers do |process_id| 
+            @config.after_init.call(logger, process_id, @config.workers)
+          end
+        rescue Exception => e
+          logger.fatal get_exception(e)
         end
       end
 
-      @config.before_init.call(@config.logger, init_block)
+      begin
+        @config.before_init.call(@config.logger, init_block)
+      rescue Exception => e
+        logger.fatal get_exception(e)
+      end
       # Start monitoring loop
       
       setup_signals

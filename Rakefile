@@ -11,6 +11,7 @@ begin
     gemspec.homepage = "http://github.com/glebpom/daemonizer"
     gemspec.authors = ["Gleb Pomykalov"]
     gemspec.add_dependency('log4r', '>= 1.1.8')
+    gemspec.add_dependency('thor', '>= 0.13.7')
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError

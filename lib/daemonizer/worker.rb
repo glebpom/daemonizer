@@ -25,6 +25,13 @@ module Daemonizer
       return if shutdown?
       if @engine == 'fork'
         @pid = Kernel.fork do
+          Dir.chdir '/'
+          File.umask 0000
+
+          STDIN.reopen '/dev/null'
+          STDOUT.reopen '/dev/null', 'a'
+          STDERR.reopen STDOUT
+          
           @pid = Process.pid
           GDC.set "#{@pid}/#{@worker_id}"
           normal_exit = false
@@ -49,7 +56,7 @@ module Daemonizer
         end
       elsif @engine == 'thread'
         @thread = Thread.start do
-          @worker_block.call
+          @worker_block.call(@worker_id)
         end
       else
         raise ArgumentError, "Invalid engine name: #{@engine}"
