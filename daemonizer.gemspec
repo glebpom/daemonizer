@@ -9,10 +9,10 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Gleb Pomykalov"]
-  s.date = %q{2010-07-05}
+  s.date = %q{2010-07-06}
   s.description = %q{Inspired by bundler and rack. Mostly built on top of Alexey Kovyrin's loops code. http://github.com/kovyrin/loops}
   s.email = %q{glebpom@gmail.com}
-  s.executables = ["daemonizer"]
+  s.executables = ["daemonizer", "daemonizer-memory-stats"]
   s.extra_rdoc_files = [
     "README"
   ]
@@ -20,7 +20,20 @@ Gem::Specification.new do |s|
     "README",
      "Rakefile",
      "VERSION",
-     "daemonizer.gemspec"
+     "bin/daemonizer",
+     "bin/daemonizer-memory-stats",
+     "daemonizer.gemspec",
+     "lib/daemonizer.rb",
+     "lib/daemonizer/autoload.rb",
+     "lib/daemonizer/cli.rb",
+     "lib/daemonizer/config.rb",
+     "lib/daemonizer/daemonize.rb",
+     "lib/daemonizer/dsl.rb",
+     "lib/daemonizer/engine.rb",
+     "lib/daemonizer/errors.rb",
+     "lib/daemonizer/process_manager.rb",
+     "lib/daemonizer/worker.rb",
+     "lib/daemonizer/worker_pool.rb"
   ]
   s.homepage = %q{http://github.com/glebpom/daemonizer}
   s.rdoc_options = ["--charset=UTF-8"]
