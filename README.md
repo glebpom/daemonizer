@@ -101,7 +101,7 @@ Usage
 
         def after_init 
           #we are in worker process
-          logger.info "Starting cycle"
+          logger.info "Starting cycle. We are number #{worker_id} from #{workers_count}"
           logger.info "Options - #{option(:queue)}" #We can get option :queue, which is set with set_option in pool configuration
           worker = Worker.new
           worker.run
