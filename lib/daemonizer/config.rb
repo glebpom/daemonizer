@@ -54,7 +54,6 @@ module Daemonizer
         raise ConfigError, "Handler should respond to :after_init" unless @options[:handler].public_instance_methods.include?('after_init')
         raise ConfigError, "Handler set. Don't use :after_init and :before init in Demfile" if @options[:before_init] || @options[:after_init]
       else
-        raise ConfigError, "set_option can be used only with handler" if @options[:handler_options].any?
         if @options[:before_init]
           raise ConfigError, "before_init should have block" unless @options[:before_init].is_a?(Proc)
         end
@@ -67,14 +66,6 @@ module Daemonizer
       define_method method do
         @options[method.to_sym]
       end
-    end
-     
-    def before_init
-      @handler.method(:before_init)
-    end
-
-    def after_init
-      @handler.method(:after_init)
     end
         
     [:log_file, :pid_file].each do |method|
