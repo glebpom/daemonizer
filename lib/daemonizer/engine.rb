@@ -16,17 +16,20 @@ module Daemonizer
       init_block = Proc.new do
         begin
           @pm.start_workers do |process_id| 
-            @config.after_init.call(logger, process_id, @config.workers)
+            @config.handler.worker_id = process_id
+            @config.handler.workers_count = @config.workers
+            @config.handler.after_init
           end
         rescue Exception => e
-          logger.fatal e.to_s
+          log_error(e)
         end
       end
 
       begin
-        @config.before_init.call(@config.logger, init_block)
+        @config.handler.logger = logger        
+        @config.handler.before_init(init_block)
       rescue Exception => e
-        logger.fatal e.to_s
+        log_error(e)
       end
       # Start monitoring loop
       
@@ -41,17 +44,25 @@ module Daemonizer
 
       init_block = Proc.new do
         begin
-          @config.after_init.call(logger, 1, 1)
+          @config.handler.worker_id = 1
+          @config.handler.workers_count = 1
+          @config.handler.after_init
         rescue Exception => e
-          logger.fatal e.to_s
+          log_error(e)
         end
       end
 
       begin
-        @config.before_init.call(@config.logger, init_block)
+        @config.handler.logger = logger        
+        @config.handler.before_init(init_block)
       rescue Exception => e
-        logger.fatal e.to_s
+        log_error(e)
       end
+    end
+    
+    def log_error(e)
+      logger.fatal e.to_s
+      logger.fatal "#{e.class}: #{e}\n" + e.backtrace.join("\n")
     end
 
     private

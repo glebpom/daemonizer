@@ -34,15 +34,11 @@ pool :daemonizer do
 end
 
 pool :new_daemonizer do
+  workers 4
+  poll_period 5
+  log_file "log/daemonizer.log" #relative to Demfile
 
-  before_init do |logger, block|
-    logger.info "New: Preparing master process"
-    block.call
-  end
+  handler ::AsyncObserver::DaemonizerHandler
   
-  after_init do |logger, worker_id, workers_count|
-    logger.info "Started #{worker_id}/#{workers_count}"
-    sleep 1
-    logger.info "Stopped #{worker_id}/#{workers_count}"
-  end
+  set_option :queue, lambda { |worker_id, worker_count| "queue_#{worker_id}"}
 end

@@ -15,6 +15,11 @@ module Daemonizer
       @configs  = {}
     end
     
+    def set_option(option, value)
+      @options[:handler_options] ||= {}
+      @options[:handler_options][option.to_sym] = value
+    end
+    
     def handler(handler)
       @options[:handler] = handler
     end

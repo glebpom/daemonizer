@@ -11,6 +11,8 @@ module Daemonizer
   autoload :Worker,         __p('worker')
   autoload :WorkerPool,     __p('worker_pool')
   autoload :ProcessManager, __p('process_manager')
+  autoload :Handler,        __p('handler')
+  autoload :FakeHandler,    __p('handler')
 
   include Errors
 end

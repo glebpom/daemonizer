@@ -48,6 +48,10 @@ module Daemonizer
 
       fork && exit # Fork and exit from the parent
 
+      STDIN.reopen '/dev/null'
+      STDOUT.reopen '/dev/null', 'a'
+      STDERR.reopen STDOUT
+      
       # Detach from the controlling terminal
       unless sess_id = Process.setsid
         raise 'cannot detach from controlling terminal'
