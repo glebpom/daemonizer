@@ -15,10 +15,10 @@ Gem::Specification.new do |s|
   s.email = %q{glebpom@gmail.com}
   s.executables = ["daemonizer"]
   s.extra_rdoc_files = [
-    "README"
+    "README.md"
   ]
   s.files = [
-    "README",
+    "README.md",
      "Rakefile",
      "VERSION",
      "bin/daemonizer",
