@@ -3,11 +3,10 @@ Daemonizer: Simple framework for creating daemons with Ruby
 
 **Homepage**:     [http://daemonizer.org](http://daemonizer.org)   
 **Git**:          [http://github.com/glebpom/daemonizer](http://github.com/glebpom/daemonizer)   
-**Author**:       Gleb Pomykalov
-**Contributors**: See Contributors section below    
-**Copyright**:    2010 
+**Author**:       Gleb Pomykalov    
+**Copyright**:    2010    
 **License**:      MIT License    
-**Status**:       alpha
+**Status**:       alpha    
 
 Synopsis
 --------
