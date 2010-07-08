@@ -22,7 +22,7 @@ Feature List
 **1. Demfile (similar to Gemfile, Rakefile)** as a configuration file. It is 
 possible to describe different background pools there.
 
-**2. Two engines**: :thread and :fork.  
+**2. Two engines**: :thread and :fork. (thread is currently broken)
                                                                               
 **3. Monitoring**: If child is found dead it will be immediately 
 restored
