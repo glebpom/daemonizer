@@ -41,7 +41,7 @@ To install Daemonizer, use the following command:
 Usage
 -----
 
-**1. Demfile example:**
+**Demfile example:**
 
     engine :fork 
     workers 2
@@ -83,7 +83,28 @@ Usage
       poll_period 5
       log_file "log/daemonizer.log" #relative to Demfile
 
-      handler ::AsyncObserver::DaemonizerHandler
+      handler ::MyBackgroundSolution::DaemonizerHandler
   
       set_option :queue, lambda { |worker_id, worker_count| "queue_#{worker_id}"}
+    end
+
+
+**Handler example**
+
+    module MyBackgroundSolution
+      class DaemonizerHandler < Daemonizer::Handler
+        def before_init(block)
+          require File.join(Daemonizer.root, '/config/environment') #Require rails
+          require 'my_background_solution/worker' #Require our code
+          super #now we are ready to fork
+        end
+
+        def after_init 
+          logger.info "Starting cycle"
+          logger.info "Options - #{option(:queue)}"
+          worker = Worker.new
+          worker.run
+          logger.info "Ending cycle"
+        end
+      end
     end
