@@ -27,7 +27,7 @@ possible to describe different background pools there.
 **3. Monitoring**: If child is found dead it will be immediately 
 restored
                                                                               
-**4. Logging** (via log4r)
+**4. Logging** (via [http://log4r.rubyforge.org/]log4r)
 
 Installing
 ----------
@@ -100,8 +100,9 @@ Usage
         end
 
         def after_init 
+          #we are in worker process
           logger.info "Starting cycle"
-          logger.info "Options - #{option(:queue)}"
+          logger.info "Options - #{option(:queue)}" #We can get option :queue, which is set with set_option in pool configuration
           worker = Worker.new
           worker.run
           logger.info "Ending cycle"
