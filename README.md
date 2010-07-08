@@ -20,15 +20,15 @@ type supported - forked and threaded.
 Feature List
 ------------
                                                                               
-**1. Using Demfile (similar to Gemfile, Rakefile) as a configuration file. It is 
+**1. Using Demfile (similar to Gemfile, Rakefile) as a configuration file**. It is 
 possible to describe different background pools there.
 
-**2. Supporting two engines - :thread and :fork.  
+**2. Supporting two engines**: :thread and :fork.  
                                                                               
-**3. Supporting service monitoring. If child is found dead it will be immediately 
+**3. Supporting service monitoring**: If child is found dead it will be immediately 
 restored
                                                                               
-**4. Supporting logging (via log4r)
+**4. Supporting logging** (via log4r)
 
 Installing
 ----------
@@ -42,7 +42,7 @@ To install Daemonizer, use the following command:
 Usage
 -----
 
-**1. Demfile example:
+**1. Demfile example:**
 
     engine :fork 
     workers 2
