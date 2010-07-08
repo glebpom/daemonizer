@@ -27,7 +27,7 @@ possible to describe different background pools there.
 **3. Monitoring**: If child is found dead it will be immediately 
 restored
                                                                               
-**4. Logging** (via [http://log4r.rubyforge.org/]log4r)
+**4. Logging** (via [http://log4r.rubyforge.org/](log4r))
 
 Installing
 ----------
@@ -109,3 +109,13 @@ Usage
         end
       end
     end
+    
+Who are the authors
+-------------------
+
+This gem has been created in qik.com for our internal use and then 
+the sources were opened for other people to use. All the code in this package 
+has been developed by Gleb Pomykalov, and is based on 
+[http://github.com/kovyrin/loops](loops) code written by 
+Alexey Kovyrin. The gem is released under the MIT license. For more details, 
+see the LICENSE file.
