@@ -13,6 +13,7 @@ module Daemonizer
   autoload :ProcessManager, __p('process_manager')
   autoload :Handler,        __p('handler')
   autoload :FakeHandler,    __p('handler')
+  autoload :Option,         __p('option')
 
   include Errors
 end

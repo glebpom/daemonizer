@@ -13,10 +13,10 @@ module Daemonizer
     end
     
     def option(key)
-      if option = @options[key.to_sym] and option.is_a?(Proc)
-        option.call(@worker_id, @workers_count)
+      if option = @options[key.to_sym]
+        option.value(self)
       else
-        option
+        nil
       end
     end
   end

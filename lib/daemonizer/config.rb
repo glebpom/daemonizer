@@ -12,7 +12,7 @@ module Daemonizer
       validate
       initialize_handler
     end
-    
+
     def initialize_handler
       if @options[:after_init]
         @handler = FakeHandler.new(@options[:before_init], @options[:after_init], @options)
@@ -22,7 +22,7 @@ module Daemonizer
       end
       @handler.logger = @logger
     end
-    
+
     def init_logger
       @logger = Logger.new @pool.to_s
       outputter = FileOutputter.new('log', :filename => self.log_file)
@@ -31,7 +31,7 @@ module Daemonizer
       @logger.level = INFO
       GDC.set "#{Process.pid}/monitor"
     end
-    
+
     def init_defaults
       @options[:before_init] ||= nil
       @options[:after_init] ||= nil
@@ -43,7 +43,7 @@ module Daemonizer
       @options[:handler] ||= nil
       @options[:handler_options] ||= {}
     end
-    
+
     def validate
       raise ConfigError, "Workers count should be more then zero" if @options[:workers] < 1
       raise ConfigError, "Engine #{@options[:engine]} is not known" unless [:fork, :thread].include?(@options[:engine])
@@ -61,13 +61,13 @@ module Daemonizer
         raise ConfigError, "after_init should have block" unless @options[:after_init].is_a?(Proc)
       end
     end
-    
+
     [:engine, :workers, :poll_period, :root].each do |method|
       define_method method do
         @options[method.to_sym]
       end
     end
-        
+
     [:log_file, :pid_file].each do |method|
       define_method method do
         File.join(Daemonizer.root, @options[method.to_sym])

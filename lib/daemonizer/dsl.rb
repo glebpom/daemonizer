@@ -15,9 +15,15 @@ module Daemonizer
       @configs  = {}
     end
     
-    def set_option(option, value)
+    def set_option(option, value = nil, &block)
       @options[:handler_options] ||= {}
-      @options[:handler_options][option.to_sym] = value
+      if value
+        @options[:handler_options][option.to_sym] = Option.new(option, value)
+      elsif block_given?
+        @options[:handler_options][option.to_sym] = Option.new(option, block, true)
+      else
+        raise DslError, "you should supply block or value to :set_option"
+      end
     end
     
     def handler(handler)

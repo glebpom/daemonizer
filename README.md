@@ -84,8 +84,17 @@ Usage
       log_file "log/daemonizer.log" #relative to Demfile
 
       handler ::MyBackgroundSolution::DaemonizerHandler
-  
-      set_option :queue, lambda { |worker_id, worker_count| "queue_#{worker_id}"}
+
+      #automatically-parsed option by daemonizer
+      set_option :queue do |worker_id, worker_count|  
+        "queue_#{worker_id}"
+      end
+      
+      #simple string option
+      set_option :author, "Gleb Pomykalov"
+      
+      #lambda-option (transparent for daemonizer, fully processed by handler)
+      set_option :on_error, lambda { |object| object.logger.fatal "epic fail"}
     end
 
 
