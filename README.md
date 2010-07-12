@@ -83,7 +83,7 @@ Usage
       poll_period 5
       log_file "log/daemonizer.log" #relative to Demfile
 
-      handler ::MyBackgroundSolution::DaemonizerHandler
+      handler MyBackgroundSolution::DaemonizerHandler
 
       #automatically-parsed option by daemonizer
       set_option :queue do |worker_id, worker_count|  
