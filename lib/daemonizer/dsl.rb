@@ -24,7 +24,11 @@ class Daemonizer::Dsl
       raise DslError, "you should supply block or value to :set_option"
     end
   end
-  
+
+  def not_cow_friendly
+    @options[:cow_friendly] = false
+  end
+    
   def handler(handler)
     @options[:handler] = handler
   end

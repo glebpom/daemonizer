@@ -42,6 +42,7 @@ module Daemonizer
       @options[:pid_file] ||= "pid/#{@pool}.pid"
       @options[:handler] ||= nil
       @options[:handler_options] ||= {}
+      @options[:cow_friendly] = true if @options[:cow_friendly].nil?
     end
 
     def validate
@@ -62,7 +63,7 @@ module Daemonizer
       end
     end
 
-    [:engine, :workers, :poll_period, :root].each do |method|
+    [:engine, :workers, :poll_period, :root, :cow_friendly].each do |method|
       define_method method do
         @options[method.to_sym]
       end

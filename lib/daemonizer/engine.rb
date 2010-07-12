@@ -26,6 +26,14 @@ module Daemonizer
       end
 
       begin
+        if @config.cow_friendly
+          if GC.respond_to?(:copy_on_write_friendly=)
+          	GC.copy_on_write_friendly = true
+          	logger.info "Enabling COW-friendly feature"
+          else
+          	logger.info "COW-friendly feature is not supported by currently used ruby version"
+          end
+        end
         @config.handler.logger = logger        
         @config.handler.before_init(init_block)
       rescue Exception => e

@@ -84,6 +84,8 @@ Usage
       log_file "log/daemonizer.log" #relative to Demfile
 
       handler MyBackgroundSolution::DaemonizerHandler
+      
+      not_cow_friendly #disable Copy-On-Write friendly (enabled by default)
 
       #automatically-parsed option by daemonizer
       set_option :queue do |worker_id, worker_count|  
