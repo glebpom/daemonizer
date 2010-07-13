@@ -6,7 +6,7 @@ module Daemonizer
     def initialize(config, debug = false)
       @config = config
       @logger = Logger.new @config.name.to_s
-      outputter = FileOutputter.new('log', :filename => self.log_file)
+      outputter = FileOutputter.new('log', :filename => @config.log_file)
       outputter.formatter = PatternFormatter.new :pattern => "%d - %l %g - %m"
       @logger.outputters = outputter
       @logger.level = INFO
