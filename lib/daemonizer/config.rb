@@ -33,7 +33,6 @@ module Daemonizer
     def init_defaults
       @options[:before_init] ||= nil
       @options[:after_init] ||= nil
-      @options[:engine] ||= :fork
       @options[:workers] ||= 1
       @options[:log_file] ||= "log/#{@pool}.log"
       @options[:poll_period] ||= 5
@@ -45,8 +44,6 @@ module Daemonizer
 
     def validate
       raise ConfigError, "Workers count should be more then zero" if @options[:workers] < 1
-      raise ConfigError, "Engine #{@options[:engine]} is not known" unless [:fork, :thread].include?(@options[:engine])
-
       raise ConfigError, "Poll period should be more then zero" if @options[:poll_period] < 1
       if @options[:handler]
         raise ConfigError, "Handler should be a class" unless @options[:handler].is_a?(Class)
@@ -61,7 +58,7 @@ module Daemonizer
       end
     end
 
-    [:engine, :workers, :poll_period, :root, :cow_friendly].each do |method|
+    [:workers, :poll_period, :root, :cow_friendly].each do |method|
       define_method method do
         @options[method.to_sym]
       end

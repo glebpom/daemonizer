@@ -13,7 +13,7 @@ module Daemonizer
     def start_workers(&blk)
       raise ArgumentError, "Need a worker block!" unless block_given?
 
-      @worker_pools[@config.pool] = WorkerPool.new(@config.pool, self, @config.engine, &blk)
+      @worker_pools[@config.pool] = WorkerPool.new(@config.pool, self, &blk)
       @worker_pools[@config.pool].start_workers(@config.workers)
     end
 

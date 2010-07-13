@@ -2,11 +2,10 @@ module Daemonizer
   class WorkerPool
     attr_reader :name, :logger
 
-    def initialize(name, pm, engine, &blk)
+    def initialize(name, pm, &blk)
       @name = name
       @pm = pm
       @worker_block = blk
-      @engine = engine
       @workers = []
       @logger = @pm.logger
     end
@@ -18,7 +17,7 @@ module Daemonizer
     def start_workers(number)
       logger.debug "Creating #{number} workers for #{name} pool..."
       number.times do |i|
-        @workers << Worker.new(name, @pm, @engine, i+1, &@worker_block)
+        @workers << Worker.new(name, @pm, i+1, &@worker_block)
       end
     end
 

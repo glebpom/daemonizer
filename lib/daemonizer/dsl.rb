@@ -44,11 +44,7 @@ class Daemonizer::Dsl
   def workers(num)
     @options[:workers] = num.to_i
   end
-  
-  def engine(name)
-    @options[:engine] = name.to_sym
-  end
-  
+    
   def before_init(&blk)
     @options[:before_init] = blk
   end
