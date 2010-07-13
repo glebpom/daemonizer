@@ -1,13 +1,16 @@
 module Daemonizer
   class Engine
     attr_reader :config
+    attr_reader :logger
 
     def initialize(config, debug = false)
       @config = config
-    end
-    
-    def logger
-      @config.logger
+      @logger = Logger.new @config.name.to_s
+      outputter = FileOutputter.new('log', :filename => self.log_file)
+      outputter.formatter = PatternFormatter.new :pattern => "%d - %l %g - %m"
+      @logger.outputters = outputter
+      @logger.level = INFO
+      GDC.set "#{Process.pid}/monitor"
     end
 
     def start!

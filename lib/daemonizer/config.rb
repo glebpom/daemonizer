@@ -8,9 +8,16 @@ module Daemonizer
       @pool = pool
       @options = options
       init_defaults
-      init_logger
       validate
       initialize_handler
+    end
+    
+    def option(key)
+      if handler
+        handler.option(key) 
+      else
+        raise ConfigError, "handler is not initialized"
+      end
     end
 
     def initialize_handler
@@ -21,15 +28,6 @@ module Daemonizer
         @handler = @options[:handler].new(@options[:handler_options])
       end
       @handler.logger = @logger
-    end
-
-    def init_logger
-      @logger = Logger.new @pool.to_s
-      outputter = FileOutputter.new('log', :filename => self.log_file)
-      outputter.formatter = PatternFormatter.new :pattern => "%d - %l %g - %m"
-      @logger.outputters = outputter
-      @logger.level = INFO
-      GDC.set "#{Process.pid}/monitor"
     end
 
     def init_defaults
@@ -77,10 +75,6 @@ module Daemonizer
     
     def name
       @pool
-    end
-    
-    def logger
-      @logger
     end
   end
 

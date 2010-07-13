@@ -5,14 +5,16 @@ module Daemonizer
   class CLI < Thor
     check_unknown_options!
 
+    method_option :demfile, :type => :string, :aliases => "-D", :banner => "Path to Demfile"
+
     def initialize(*)
       super
+      Daemonizer.demfile = options[:demfile] || "Demfile"
     end
                 
     desc "start", "Start pool"
-    method_option :demfile, :type => :string, :aliases => "-D", :banner => "Path to Demfile"
     def start(pool_name = nil)
-      control_pools_loop(pool_name, "successfully started", options[:demfile]) do |pool|
+      control_pools_loop(pool_name, "successfully started") do |pool|
         # Pid file check
         if Daemonize.check_pid(pool.pid_file)
           print_pool pool.name,  "Can't start, another process exists!"
@@ -41,9 +43,8 @@ module Daemonizer
     end
     
     desc "stop", "Stop pool"
-    method_option :demfile, :type => :string, :aliases => "-D", :banner => "Path to Demfile"
     def stop(pool_name = nil)
-      control_pools_loop(pool_name, "successfully stoped", options[:demfile]) do |pool|
+      control_pools_loop(pool_name, "successfully stoped") do |pool|
         STDOUT.sync = true
         unless Daemonize.check_pid(pool.pid_file)
           print_pool pool.name, "No pid file or a stale pid file!"
@@ -65,18 +66,28 @@ module Daemonizer
       return true
     end
 
+    desc "list", "List of pools"
+    def list
+      puts "List of configured pools:"
+      puts "" 
+      Daemonizer.find_pools(nil).each do |pool|
+        puts "  * #{pool.name}" 
+      end
+      puts ""
+      return true
+    end
+
+
     desc "restart", "Restart pool"
-    method_option :demfile, :type => :string, :aliases => "-D", :banner => "Path to Demfile"
     def restart(pool_name = nil)
       invoke :stop, pool_name
       invoke :start, pool_name
     end
 
     desc "debug", "Debug pool (do not demonize)"
-    method_option :demfile, :type => :string, :aliases => "-D", :banner => "Path to Demfile"
     def debug(pool_name = nil)
       puts "You should supply pool_name to debug" if pool_name.nil?
-      control_pools_loop(pool_name, "execution ended", options[:demfile]) do |pool|
+      control_pools_loop(pool_name, "execution ended") do |pool|
         STDOUT.sync = true
         print_pool pool.name,  "Debugging pool: "
         
@@ -90,8 +101,8 @@ module Daemonizer
     end
     
   private
-    def control_pools_loop(pool_name, message = nil, demfile = nil, &block)
-      find_pools(pool_name, demfile).each do |pool|
+    def control_pools_loop(pool_name, message = nil, &block)
+      Daemonizer.find_pools(pool_name).each do |pool|
         Process.fork do
           yield(pool)
         end
@@ -99,25 +110,6 @@ module Daemonizer
         if $?.exitstatus == 0 and message
           print_pool pool.name, message 
         end
-      end
-    end
-    
-    def find_pools(pool_name, demfile)
-      demfile_name = demfile || "Demfile"
-      
-      Daemonizer.root = File.dirname(File.expand_path(demfile_name))
-      
-      pools = Dsl.evaluate(demfile_name)
-      
-      if pool_name
-        if pool = pools[pool_name.to_sym]
-          [pool]
-        else
-          print_pool pool_name,  "pool is not configured"
-          []
-        end
-      else
-        pools.values
       end
     end
     
