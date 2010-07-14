@@ -4,40 +4,46 @@ module Daemonizer
     attr_accessor :workers_count
     attr_accessor :logger
     
-    def initialize(options = {})
-      @options = options
+    def initialize(handler_options = {})
+      @handler_options = handler_options
     end
     
-    def before_init(block)
+    def prepare(block)
       block.call
     end
     
     def option(key)
-      if option = @options[key.to_sym]
-        option.value(self)
+      if handler_option = @handler_options[key.to_sym]
+        handler_option.value(self)
       else
         nil
+      end
+    end
+    
+    def after_fork
+      if block = option(:after_fork)
+        block.call(Daemonizer.logger, @worker_id, @workers_count)
       end
     end
   end
   
   class FakeHandler < Handler
-    def initialize(before_init, after_init, options = {})
-      @before_init = before_init
-      @after_init = after_init
-      super(options)
+    def initialize(prepare, start, handler_options = {})
+      @prepare = prepare
+      @start = start
+      super(handler_options)
     end
     
-    def before_init(block)
-      if @before_init
-        @before_init.call(@logger, block)
+    def prepare(block)
+      if @prepare
+        @prepare.call(Daemonizer.logger, block)
       else
         super
       end
     end
         
-    def after_init
-      @after_init.call(@logger, @worker_id, @workers_count)
+    def start
+      @start.call(Daemonizer.logger, @worker_id, @workers_count)
     end
   end
 end

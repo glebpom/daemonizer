@@ -32,6 +32,25 @@ module Daemonizer
       "Demfile"
     end
   end
+  
+  def self.init_logger(name, log_file)
+    @@logger = Logger.new name
+    outputter = FileOutputter.new('log', :filename => log_file)
+    outputter.formatter = PatternFormatter.new :pattern => "%d - %l %g - %m"
+    @@logger.outputters = outputter
+    @@logger.level = INFO
+  end
+  
+  def self.init_console_logger(name)
+    @@logger = Logger.new name
+    outputter = Outputter.stdout
+    outputter.formatter = PatternFormatter.new :pattern => "%d - %l %g - %m"
+    @@logger.outputters = outputter
+  end
+  
+  def self.logger
+    @@logger
+  end
 
   def self.[](pool)
     find_pools(pool).first or nil

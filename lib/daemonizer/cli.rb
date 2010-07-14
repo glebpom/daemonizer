@@ -87,7 +87,7 @@ module Daemonizer
     desc "debug", "Debug pool (do not demonize)"
     def debug(pool_name = nil)
       puts "You should supply pool_name to debug" if pool_name.nil?
-      control_pools_loop(pool_name, "execution ended") do |pool|
+      control_pools_loop(pool_name, "execution ended", true) do |pool|
         STDOUT.sync = true
         print_pool pool.name,  "Debugging pool: "
         
@@ -101,9 +101,14 @@ module Daemonizer
     end
     
   private
-    def control_pools_loop(pool_name, message = nil, &block)
+    def control_pools_loop(pool_name, message = nil, debug = false, &block)
       Daemonizer.find_pools(pool_name).each do |pool|
         Process.fork do
+          if debug
+            Daemonizer.init_console_logger(pool.name.to_s)
+          else
+            Daemonizer.init_logger(pool.name.to_s, pool.log_file)
+          end
           yield(pool)
         end
         Process.wait

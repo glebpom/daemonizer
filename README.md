@@ -43,7 +43,6 @@ Usage
 
 **Demfile example:**
 
-    engine :fork 
     workers 2
 
     pool :daemonizer do
@@ -51,11 +50,11 @@ Usage
       poll_period 5
       log_file "log/daemonizer.log" #relative to Demfile
   
-      before_init do |logger, block|
+      prepare do |logger, block|
         block.call
       end
   
-      after_init do |logger, worker_id, workers_count|
+      start do |logger, worker_id, workers_count|
         logger.info "Started #{worker_id} from #{workers_count}"
     
         exit = false
@@ -97,6 +96,11 @@ Usage
       
       #lambda-option (transparent for daemonizer, fully processed by handler)
       set_option :on_error, lambda { |object| object.logger.fatal "epic fail"}
+      
+      #executes after worker forked but before start block invoked
+      after_fork do |logger, worker_id, workers_count|
+        #reconnect to db, etc.
+      end
     end
 
 
@@ -126,7 +130,7 @@ Who are the authors
 
 This gem has been created in qik.com for our internal use and then 
 the sources were opened for other people to use. All the code in this package 
-has been developed by Gleb Pomykalov, and is based on 
-[http://github.com/kovyrin/loops](loops) code written by 
-Alexey Kovyrin. The gem is released under the MIT license. For more details, 
-see the LICENSE file.
+has been developed by Gleb Pomykalov. As for the first versions, it was mostly based
+ on [http://github.com/kovyrin/loops](loops) code written by Alexey Kovyrin. Now
+most of it is heavily refactored.  The gem is released under the MIT license. For
+more details, see the LICENSE file.

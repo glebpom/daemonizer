@@ -24,6 +24,10 @@ class Daemonizer::Dsl
       raise DslError, "you should supply block or value to :set_option"
     end
   end
+  
+  def after_fork(&block)
+    set_option :after_fork, block
+  end
 
   def not_cow_friendly
     @options[:cow_friendly] = false
@@ -45,12 +49,12 @@ class Daemonizer::Dsl
     @options[:workers] = num.to_i
   end
     
-  def before_init(&blk)
-    @options[:before_init] = blk
+  def prepare(&blk)
+    @options[:prepare] = blk
   end
   
-  def after_init(&blk)
-    @options[:after_init] = blk
+  def start(&blk)
+    @options[:start] = blk
   end
   
   def pid_file(pid)

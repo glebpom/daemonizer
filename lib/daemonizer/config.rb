@@ -11,28 +11,19 @@ module Daemonizer
       validate
       initialize_handler
     end
-    
-    def option(key)
-      if handler
-        handler.option(key) 
-      else
-        raise ConfigError, "handler is not initialized"
-      end
-    end
 
     def initialize_handler
-      if @options[:after_init]
-        @handler = FakeHandler.new(@options[:before_init], @options[:after_init], @options)
-        @options[:after_init] = @options[:before_init] = nil
+      if @options[:start]
+        @handler = FakeHandler.new(@options[:prepare], @options[:start], @options)
+        @options[:start] = @options[:prepare] = nil
       elsif
         @handler = @options[:handler].new(@options[:handler_options])
       end
-      @handler.logger = @logger
     end
 
     def init_defaults
-      @options[:before_init] ||= nil
-      @options[:after_init] ||= nil
+      @options[:prepare] ||= nil
+      @options[:start] ||= nil
       @options[:workers] ||= 1
       @options[:log_file] ||= "log/#{@pool}.log"
       @options[:poll_period] ||= 5
@@ -47,14 +38,14 @@ module Daemonizer
       raise ConfigError, "Poll period should be more then zero" if @options[:poll_period] < 1
       if @options[:handler]
         raise ConfigError, "Handler should be a class" unless @options[:handler].is_a?(Class)
-        raise ConfigError, "Handler should respond to :after_init" unless @options[:handler].public_instance_methods.include?('after_init')
-        raise ConfigError, "Handler set. Don't use :after_init and :before init in Demfile" if @options[:before_init] || @options[:after_init]
+        raise ConfigError, "Handler should respond to :start" unless @options[:handler].public_instance_methods.include?('start')
+        raise ConfigError, "Handler set. Don't use :start and :before init in Demfile" if @options[:prepare] || @options[:start]
       else
-        if @options[:before_init]
-          raise ConfigError, "before_init should have block" unless @options[:before_init].is_a?(Proc)
+        if @options[:prepare]
+          raise ConfigError, "prepare should have block" unless @options[:prepare].is_a?(Proc)
         end
-        raise ConfigError, "after_init should be set" if @options[:after_init].nil?
-        raise ConfigError, "after_init should have block" unless @options[:after_init].is_a?(Proc)
+        raise ConfigError, "start should be set" if @options[:start].nil?
+        raise ConfigError, "start should have block" unless @options[:start].is_a?(Proc)
       end
     end
 
