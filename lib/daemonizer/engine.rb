@@ -45,7 +45,8 @@ module Daemonizer
     end
 
     def debug!
-      Daemonizer.init_console_logger
+      Daemonizer.init_console_logger('console')
+      @config.handler.logger = Daemonizer.logger
       
       init_block = Proc.new do
         begin
