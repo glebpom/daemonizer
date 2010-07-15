@@ -41,7 +41,8 @@ module Daemonizer
     @@logger.level = INFO
   end
   
-  def self.reopen_log_file(name, log_file)
+  def self.reopen_log_file
+    log_file = @@logger.outputters.first.filename
     @@logger.outputters.each do |o|
       o.flush
       o.close

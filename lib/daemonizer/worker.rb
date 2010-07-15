@@ -28,7 +28,7 @@ module Daemonizer
         STDERR.reopen STDOUT
         
         @pid = Process.pid
-        Daemonizer.reopen_log_file        
+        Daemonizer.reopen_log_file
         GDC.set "#{@pid}/#{@worker_id}"
         
         Daemonizer.logger.info "Log file reopened after fork"
