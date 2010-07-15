@@ -35,7 +35,7 @@ module Daemonizer
   
   def self.init_logger(name, log_file)
     @@logger = Logger.new name
-    outputter = FileOutputter.new('log', :filename => log_file, :trunc => true)
+    outputter = FileOutputter.new('log', :filename => log_file, :trunc => false)
     outputter.formatter = PatternFormatter.new :pattern => "%d - %l %g - %m"
     @@logger.outputters = outputter
     @@logger.level = INFO
