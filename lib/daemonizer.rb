@@ -47,7 +47,7 @@ module Daemonizer
       o.flush
       o.close
     end
-    outputter = FileOutputter.new('log', :filename => log_file, :trunc => false)
+    outputter = FileOutputter.new('forked-log', :filename => log_file, :trunc => false)
     outputter.formatter = PatternFormatter.new :pattern => "%d - %l %g - %m"
     @@logger.outputters = outputter
   end
