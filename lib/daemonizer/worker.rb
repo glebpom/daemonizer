@@ -30,6 +30,7 @@ module Daemonizer
         @pid = Process.pid
         Daemonizer.reopen_log_file        
         GDC.set "#{@pid}/#{@worker_id}"
+        
         Daemonizer.logger.info "Log file reopened after fork"
         normal_exit = false
         begin

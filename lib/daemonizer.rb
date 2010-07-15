@@ -48,7 +48,7 @@ module Daemonizer
     end
     outputter = FileOutputter.new('log', :filename => log_file, :trunc => false)
     outputter.formatter = PatternFormatter.new :pattern => "%d - %l %g - %m"
-    @@logger.outputters = outputter  end
+    @@logger.outputters = outputter
   end
   
   def self.flush_logger
