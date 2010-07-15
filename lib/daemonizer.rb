@@ -41,6 +41,16 @@ module Daemonizer
     @@logger.level = INFO
   end
   
+  def self.reopen_log_file(name, log_file)
+    @@logger.outputters.each do |o|
+      o.flush
+      o.close
+    end
+    outputter = FileOutputter.new('log', :filename => log_file, :trunc => false)
+    outputter.formatter = PatternFormatter.new :pattern => "%d - %l %g - %m"
+    @@logger.outputters = outputter  end
+  end
+  
   def self.flush_logger
     @@logger.outputters.each do |o| 
       o.flush
