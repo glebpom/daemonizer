@@ -42,7 +42,7 @@ module Daemonizer
   end
   
   def self.flush_logger
-    @@logger.each_outputter do |o| 
+    @@logger.outputters.each do |o| 
       o.flush
     end
   end
