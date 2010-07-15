@@ -41,6 +41,12 @@ module Daemonizer
     @@logger.level = INFO
   end
   
+  def self.flush_logger
+    @@logger.each_outputter do |o| 
+      o.flush
+    end
+  end
+  
   def self.init_console_logger(name)
     @@logger = Logger.new name
     outputter = Outputter.stdout
