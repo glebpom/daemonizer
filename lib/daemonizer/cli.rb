@@ -5,11 +5,11 @@ module Daemonizer
   class CLI < Thor
     check_unknown_options!
 
-    method_option :demfile, :type => :string, :aliases => "-D", :banner => "Path to Demfile"
+    method_option :daemonfile, :type => :string, :aliases => "-D", :banner => "Path to Daemonfile"
 
     def initialize(*)
       super
-      Daemonizer.demfile = options[:demfile] || "Demfile"
+      Daemonizer.daemonfile = options[:daemonfile] || "Daemonfile"
     end
                 
     desc "start", "Start pool"

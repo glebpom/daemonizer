@@ -16,18 +16,18 @@ module Daemonizer
     if defined?(@@root)
       @@root
     else
-      File.dirname(demfile)
+      File.dirname(daemonfile)
     end
   end
   
-  def self.demfile=(demfile_name)
-    @@demfile = File.expand_path(demfile_name)
-    @@demfile
+  def self.daemonfile=(daemonfile_name)
+    @@daemonfile = File.expand_path(daemonfile_name)
+    @@daemonfile
   end
   
-  def self.demfile
-    if defined?(@@demfile)
-      @@demfile
+  def self.daemonfile
+    if defined?(@@daemonfile)
+      @@daemonfile
     else
       "Demfile"
     end
@@ -57,7 +57,7 @@ module Daemonizer
   end
   
   def self.find_pools(pool_name = nil)    
-    pools = Dsl.evaluate(demfile)
+    pools = Dsl.evaluate(daemonfile)
 
     if pool_name
       if pool = pools[pool_name.to_sym]
