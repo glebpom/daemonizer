@@ -111,9 +111,13 @@ module Daemonizer
           end
           yield(pool)
         end
-        Process.wait
-        if $?.exitstatus == 0 and message
-          print_pool pool.name, message 
+        begin
+          Process.wait
+          if $?.exitstatus == 0 and message
+            print_pool pool.name, message 
+          end
+        rescue Interrupt => e
+          puts "Interrupted from keyboard"
         end
       end
     end
