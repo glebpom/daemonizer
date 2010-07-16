@@ -47,6 +47,22 @@ module Daemonizer
         raise ConfigError, "start should be set" if @options[:start].nil?
         raise ConfigError, "start should have block" unless @options[:start].is_a?(Proc)
       end
+      
+      # file validation
+      if File.exist?(self.log_file)
+        if !File.file?(self.log_file)
+          raise ConfigError, "'#{self.log_file}' is not a regular file"
+        elsif !File.writable?(self.log_file)
+          raise ConfigError, "'#{self.log_file}' is not writable!"
+        end
+      else # ensure directory is writable
+        dir = File.dirname(self.log_file)
+        if not File.writable?(dir)
+          raise ConfigError, "'#{dir}' is not writable!"
+        end
+        File.open(self.log_file, 'w') { |f| f.write('') } #creating empty file
+      end
+      
     end
 
     [:workers, :poll_period, :root, :cow_friendly].each do |method|

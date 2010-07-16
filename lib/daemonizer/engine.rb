@@ -4,7 +4,7 @@ module Daemonizer
 
     def initialize(config, debug = false)
       @config = config
-      GDC.set "#{Process.pid}/monitor"
+      Daemonizer.logger_context = "#{Process.pid}/monitor"
     end
     
     def start!

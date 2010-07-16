@@ -2,9 +2,7 @@ require 'rubygems'
 require 'yaml'
 require 'erb'
 require 'pathname'
-require 'log4r'
-
-include Log4r
+require 'logger'
 
 module Daemonizer
   
@@ -33,36 +31,39 @@ module Daemonizer
     end
   end
   
+  def self.logger_context=(str)
+    @@logger_context = str
+  end
+  
+  def self.logger_context
+    @@logger_context
+  end
+  
   def self.init_logger(name, log_file)
-    @@logger = Logger.new name
-    outputter = FileOutputter.new('log', :filename => log_file, :trunc => false)
-    outputter.formatter = PatternFormatter.new :pattern => "%d - %l %g - %m"
-    @@logger.outputters = outputter
-    @@logger.level = INFO
+    @@logger_file = File.open(log_file, File::WRONLY | File::APPEND)
+    @@logger = Logger.new(@@logger_file)
+    set_logger_common_options
+  end
+  
+  def self.set_logger_common_options
+    @@logger.sev_threshold = Logger::INFO
+    @@logger.formatter = Proc.new do |severity, datetime, progname, msg|
+      "%s %s -- %s -- %s\n" % [ datetime.strftime("%Y-%m-%d %H:%M:%S"), severity, Daemonizer.logger_context, msg ]
+    end
   end
   
   def self.reopen_log_file
-    log_file = @@logger.outputters.first.filename
-    @@logger.outputters.each do |o|
-      o.flush
-      o.close
-    end
-    outputter = FileOutputter.new('forked-log', :filename => log_file, :trunc => false)
-    outputter.formatter = PatternFormatter.new :pattern => "%d - %l %g - %m"
-    @@logger.outputters = outputter
+    true #do not need it in append-only mode
   end
   
   def self.flush_logger
-    @@logger.outputters.each do |o| 
-      o.flush
-    end
+    @@logger_file.flush
   end
   
   def self.init_console_logger(name)
-    @@logger = Logger.new name
-    outputter = Outputter.stdout
-    outputter.formatter = PatternFormatter.new :pattern => "%d - %l %g - %m"
-    @@logger.outputters = outputter
+    @@logger_file = STDOUT
+    @@logger = Logger.new(@@logger_file)
+    set_logger_common_options
   end
   
   def self.logger
