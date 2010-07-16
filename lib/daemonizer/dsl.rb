@@ -70,6 +70,13 @@ class Daemonizer::Dsl
     @options[:pid_file] = pid
   end
 
+  def settings_group(&blk)
+    options = @options.dup
+    yield
+  ensure
+    @options = options
+  end
+
   def pool(name, &blk)
     @pool = name.to_sym
     options = @options.dup
