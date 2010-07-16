@@ -7,6 +7,13 @@ module Daemonizer
       Daemonizer.logger_context = "#{Process.pid}/monitor"
     end
     
+    def run_callback(callback, *args)
+      if block = @config.callbacks[callback.to_sym]
+        Daemonizer.logger.info "Running :#{callback} callback"
+        block.call(*args)
+      end
+    end
+    
     def start!
       @pm = ProcessManager.new(@config)
 
@@ -15,7 +22,7 @@ module Daemonizer
           @pm.start_workers do |process_id|
             @config.handler.worker_id = process_id
             @config.handler.workers_count = @config.workers
-            @config.handler.after_fork
+            run_callback(:before_start, Daemonizer.logger, process_id, @config.workers)
             @config.handler.start
           end
         rescue Exception => e
@@ -32,9 +39,12 @@ module Daemonizer
           	Daemonizer.logger.info "COW-friendly feature is not supported by currently used ruby version"
           end
         end
-        Daemonizer.logger.info "Workers count is #{config.workers}"
         @config.handler.logger = Daemonizer.logger
-        @config.handler.prepare(init_block)
+        run_callback(:before_prepare, Daemonizer.logger)
+        Daemonizer.logger.info "Workers count is #{config.workers}"
+        @config.handler.prepare(init_block) do
+          run_callback(:after_prepare, Daemonizer.logger)
+        end
       rescue Exception => e
         log_error(e)
       end
@@ -52,6 +62,7 @@ module Daemonizer
         begin
           @config.handler.worker_id = 1
           @config.handler.workers_count = 1
+          run_callback(:before_start, Daemonizer.logger, 1, 1)
           @config.handler.start
         rescue Exception => e
           log_error(e)
@@ -59,7 +70,10 @@ module Daemonizer
       end
 
       begin
-        @config.handler.prepare(init_block)
+        run_callback(:before_prepare, Daemonizer.logger)
+        @config.handler.prepare(init_block) do
+          run_callback(:after_prepare, Daemonizer.logger)
+        end
       rescue Exception => e
         log_error(e)
       end

@@ -8,8 +8,11 @@ module Daemonizer
       @handler_options = handler_options
     end
     
-    def prepare(block)
-      block.call
+    def prepare(starter, &block)
+      if block_given?
+        yield
+      end
+      starter.call
     end
     
     def option(key)
@@ -17,12 +20,6 @@ module Daemonizer
         handler_option.value(self)
       else
         nil
-      end
-    end
-    
-    def after_fork
-      if block = option(:after_fork)
-        block.call(Daemonizer.logger, @worker_id, @workers_count)
       end
     end
   end
@@ -34,7 +31,7 @@ module Daemonizer
       super(handler_options)
     end
     
-    def prepare(block)
+    def prepare(starter, &block)
       if @prepare
         @prepare.call(Daemonizer.logger, block)
       else

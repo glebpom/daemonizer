@@ -25,8 +25,17 @@ class Daemonizer::Dsl
     end
   end
   
-  def after_fork(&block)
-    set_option :after_fork, block
+  CALLBACKS = [:before_prepare, :after_prepare, :before_start]
+  def set_callback(callback, &block)
+    return unless CALLBACKS.include?(callback.to_sym)
+    @options[:callbacks] ||= {}
+    @options[:callbacks][callback.to_sym] = block
+  end
+  
+  CALLBACKS.each do |callback|
+    define_method callback.to_sym do |&block|
+      set_callback callback.to_sym, &block
+    end
   end
 
   def not_cow_friendly

@@ -10,11 +10,12 @@ module Daemonizer
       init_defaults
       validate
       initialize_handler
+      @handler
     end
 
     def initialize_handler
       if @options[:start]
-        @handler = FakeHandler.new(@options[:prepare], @options[:start], @options)
+        @handler = FakeHandler.new(@options[:prepare], @options[:start], @options[:handler_options])
         @options[:start] = @options[:prepare] = nil
       elsif
         @handler = @options[:handler].new(@options[:handler_options])
@@ -30,7 +31,25 @@ module Daemonizer
       @options[:pid_file] ||= "pid/#{@pool}.pid"
       @options[:handler] ||= nil
       @options[:handler_options] ||= {}
+      @options[:callbacks] ||= {}
       @options[:cow_friendly] = true if @options[:cow_friendly].nil?
+    end
+    
+    def validate_file(filename)
+      # file validation
+      if File.exist?(filename)
+        if !File.file?(filename)
+          raise ConfigError, "'#{filename}' is not a regular file"
+        elsif !File.writable?(filename)
+          raise ConfigError, "'#{filename}' is not writable!"
+        end
+      else # ensure directory is writable
+        dir = File.dirname(filename)
+        if not File.writable?(dir)
+          raise ConfigError, "'#{dir}' is not writable!"
+        end
+        File.open(filename, 'w') { |f| f.write('') } #creating empty file
+      end
     end
 
     def validate
@@ -47,25 +66,11 @@ module Daemonizer
         raise ConfigError, "start should be set" if @options[:start].nil?
         raise ConfigError, "start should have block" unless @options[:start].is_a?(Proc)
       end
-      
-      # file validation
-      if File.exist?(self.log_file)
-        if !File.file?(self.log_file)
-          raise ConfigError, "'#{self.log_file}' is not a regular file"
-        elsif !File.writable?(self.log_file)
-          raise ConfigError, "'#{self.log_file}' is not writable!"
-        end
-      else # ensure directory is writable
-        dir = File.dirname(self.log_file)
-        if not File.writable?(dir)
-          raise ConfigError, "'#{dir}' is not writable!"
-        end
-        File.open(self.log_file, 'w') { |f| f.write('') } #creating empty file
-      end
-      
+      validate_file(self.log_file)
+      validate_file(self.pid_file)
     end
 
-    [:workers, :poll_period, :root, :cow_friendly].each do |method|
+    [:workers, :poll_period, :root, :cow_friendly, :callbacks].each do |method|
       define_method method do
         @options[method.to_sym]
       end
