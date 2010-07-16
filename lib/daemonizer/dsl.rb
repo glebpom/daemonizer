@@ -29,7 +29,8 @@ class Daemonizer::Dsl
   def set_callback(callback, &block)
     return unless CALLBACKS.include?(callback.to_sym)
     @options[:callbacks] ||= {}
-    @options[:callbacks][callback.to_sym] = block
+    @options[:callbacks][callback.to_sym] ||= []
+    @options[:callbacks][callback.to_sym] << block
   end
   
   CALLBACKS.each do |callback|

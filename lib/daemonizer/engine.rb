@@ -8,9 +8,11 @@ module Daemonizer
     end
     
     def run_callback(callback, *args)
-      if block = @config.callbacks[callback.to_sym]
-        Daemonizer.logger.info "Running :#{callback} callback"
-        block.call(*args)
+      if callbacks = @config.callbacks[callback.to_sym] and callbacks.any?
+        Daemonizer.logger.info "Running :#{callback} callbacks"
+        callbacks.each do |callback|
+          callback.call(*args)
+        end
       end
     end
     
