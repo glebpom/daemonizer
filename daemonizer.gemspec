@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{daemonizer}
-  s.version = "0.4.2"
+  s.version = "0.4.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Gleb Pomykalov"]
-  s.date = %q{2010-07-16}
+  s.date = %q{2010-07-17}
   s.default_executable = %q{daemonizer}
   s.description = %q{Inspired by bundler and rack. Mostly built on top of Alexey Kovyrin's loops code. http://github.com/kovyrin/loops}
   s.email = %q{glebpom@gmail.com}
