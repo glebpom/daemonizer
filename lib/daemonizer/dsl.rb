@@ -82,6 +82,7 @@ class Daemonizer::Dsl
     @pool = name.to_sym
     options = @options.dup
     yield
+    puts "Intepolating config: #{@options.inspect} for pool #{@pool}"
     @configs[@pool] = Daemonizer::Config.new(@pool, @options)
   rescue Daemonizer::Config::ConfigError => e
     puts "* Error in pool \"#{@pool}\": #{e.to_s}. Skipping..."
