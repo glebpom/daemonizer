@@ -70,7 +70,7 @@ module Daemonizer
       validate_file(self.pid_file)
     end
 
-    [:workers, :poll_period, :root, :cow_friendly, :callbacks].each do |method|
+    [:workers, :poll_period, :root, :cow_friendly, :callbacks, :handler_options].each do |method|
       define_method method do
         @options[method.to_sym]
       end

@@ -72,7 +72,7 @@ class Daemonizer::Dsl
   end
 
   def settings_group(&blk)
-    options = @options.dup
+    options = config_copy
     yield
   ensure
     @options = options
@@ -80,7 +80,7 @@ class Daemonizer::Dsl
 
   def pool(name, &blk)
     @pool = name.to_sym
-    options = @options.dup
+    options = config_copy
     yield
     @configs[@pool] = Daemonizer::Config.new(@pool, @options)
   rescue Daemonizer::Config::ConfigError => e
@@ -88,5 +88,12 @@ class Daemonizer::Dsl
   ensure
     @options = options
     @pool = nil
+  end
+  
+  def config_copy
+    options = @options.dup
+    options[:handler_options] = @options[:handler_options].dup
+    options[:callbacks] = @options[:callbacks].dup
+    options
   end
 end
