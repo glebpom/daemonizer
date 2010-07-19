@@ -14,6 +14,7 @@ module Daemonizer
   autoload :Handler,        __p('handler')
   autoload :FakeHandler,    __p('handler')
   autoload :Option,         __p('option')
+  autoload :Stats,          __p('stats')
 
   include Errors
 end

@@ -77,7 +77,6 @@ module Daemonizer
       return true
     end
 
-
     desc "restart", "Restart pool"
     def restart(pool_name = nil)
       invoke :stop, pool_name
@@ -97,6 +96,14 @@ module Daemonizer
         exit(0)
       end
       return true    
+    end
+    
+    desc "stat", "Pools statistics"
+    def stat(pool_name = nil)
+      statistics = Daemonizer::Stats::MemoryStats.new
+      Daemonizer.find_pools(pool_name).each do |pool|
+        statistics.print(pool.name.to_s)
+      end
     end
     
   private
