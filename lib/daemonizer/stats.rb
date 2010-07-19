@@ -34,7 +34,6 @@ WHITE   = "\e[37m"
 YELLOW  = "\e[33m"
 BLUE_BG = "\e[44m"
 
-module Daemonizer; end
 module Daemonizer::Stats
   # Container for tabular data.
   class Table
