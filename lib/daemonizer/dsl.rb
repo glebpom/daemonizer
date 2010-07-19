@@ -92,8 +92,8 @@ class Daemonizer::Dsl
   
   def config_copy
     options = @options.dup
-    options[:handler_options] = @options[:handler_options].dup
-    options[:callbacks] = @options[:callbacks].dup
+    options[:handler_options] = @options[:handler_options].dup if @options[:handler_options]
+    options[:callbacks] = @options[:callbacks].dup if @options[:callbacks]
     options
   end
 end
