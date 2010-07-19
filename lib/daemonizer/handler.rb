@@ -33,14 +33,14 @@ module Daemonizer
     
     def prepare(starter, &block)
       if @prepare
-        @prepare.call(Daemonizer.logger, block)
+        @prepare.call(block)
       else
         super
       end
     end
         
     def start
-      @start.call(Daemonizer.logger, @worker_id, @workers_count)
+      @start.call(@worker_id, @workers_count)
     end
   end
 end

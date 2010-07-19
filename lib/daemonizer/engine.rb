@@ -24,7 +24,7 @@ module Daemonizer
           @pm.start_workers do |process_id|
             @config.handler.worker_id = process_id
             @config.handler.workers_count = @config.workers
-            run_callback(:before_start, Daemonizer.logger, process_id, @config.workers)
+            run_callback :before_start, @config.pool, process_id, @config.workers
             @config.handler.start
           end
         rescue Exception => e
@@ -42,10 +42,10 @@ module Daemonizer
           end
         end
         @config.handler.logger = Daemonizer.logger
-        run_callback(:before_prepare, Daemonizer.logger)
+        run_callback :before_prepare, @config.pool
         Daemonizer.logger.info "Workers count is #{config.workers}"
         @config.handler.prepare(init_block) do
-          run_callback(:after_prepare, Daemonizer.logger)
+          run_callback :after_prepare, @config.pool
         end
       rescue Exception => e
         log_error(e)
@@ -64,7 +64,7 @@ module Daemonizer
         begin
           @config.handler.worker_id = 1
           @config.handler.workers_count = 1
-          run_callback(:before_start, Daemonizer.logger, 1, 1)
+          run_callback :before_start, @config.pool, 1, 1
           @config.handler.start
         rescue Exception => e
           log_error(e)
@@ -72,9 +72,9 @@ module Daemonizer
       end
 
       begin
-        run_callback(:before_prepare, Daemonizer.logger)
+        run_callback :before_prepare, @config.pool
         @config.handler.prepare(init_block) do
-          run_callback(:after_prepare, Daemonizer.logger)
+          run_callback :after_prepare, @config.pool
         end
       rescue Exception => e
         log_error(e)
