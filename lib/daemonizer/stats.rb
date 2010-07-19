@@ -132,11 +132,33 @@ module Daemonizer::Stats
   		end
   	end
   	
-  	def print(pool_name)
+  	attr_reader :pool
+  	
+  	def initialize(pool)
+  	  @pool = pool
+	  end
+  	
+  	def find_all_processes
+  	  find_monitor + find_workers
+	  end
+	  
+	  def find_workers
+  	  self.list_processes(:match => /#{@pool.name} worker: instance \d{1,}/)
+    end
+    
+    def find_monitor
+  	  self.list_processes(:match => /#{@pool.name} monitor/)
+    end
+    
+  	def print
   		puts
-  		pool_processes = list_processes(:match =>
-  			/(#{pool_name} worker: instance \d{1,}|#{pool_name} monitor)/)
-  		print_process_list("#{pool_name} processes", pool_processes, :show_ppid => false)
+  		pool_processes = find_all_processes
+  		if pool_processes.size == 0
+  			puts "*** It seems like pool '#{@pool.name}' is not running"
+  			return
+		  end
+		  puts
+  		print_process_list("#{@pool.name} processes", pool_processes, :show_ppid => false)
 
   		if RUBY_PLATFORM !~ /linux/
   			puts
@@ -148,7 +170,7 @@ module Daemonizer::Stats
   				"private dirty RSS of processes cannot be determined."
   		end
   	end
-
+    
   	# Returns a list of Process objects that match the given search criteria.
   	#
   	#  # Search by executable path.
@@ -224,6 +246,7 @@ module Daemonizer::Stats
   	end
 
   private
+  
   	def platform_provides_private_dirty_rss_information?
   		return RUBY_PLATFORM =~ /linux/
   	end

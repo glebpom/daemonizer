@@ -98,11 +98,11 @@ module Daemonizer
       return true    
     end
     
-    desc "stat", "Pools statistics"
-    def stat(pool_name = nil)
-      statistics = Daemonizer::Stats::MemoryStats.new
+    desc "stats", "Pools statistics"
+    def stats(pool_name = nil)
       Daemonizer.find_pools(pool_name).each do |pool|
-        statistics.print(pool.name.to_s)
+        statistics = Daemonizer::Stats::MemoryStats.new(pool)
+        statistics.print
       end
     end
     
