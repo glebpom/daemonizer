@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{daemonizer}
-  s.version = "0.4.7"
+  s.version = "0.4.8"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Gleb Pomykalov"]
@@ -37,6 +37,7 @@ Gem::Specification.new do |s|
      "lib/daemonizer/handler.rb",
      "lib/daemonizer/option.rb",
      "lib/daemonizer/process_manager.rb",
+     "lib/daemonizer/stats.rb",
      "lib/daemonizer/worker.rb",
      "lib/daemonizer/worker_pool.rb"
   ]
