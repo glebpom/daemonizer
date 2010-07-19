@@ -41,6 +41,7 @@ module Daemonizer
   
   def self.init_logger(name, log_file)
     @@logger_file = File.open(log_file, File::WRONLY | File::APPEND)
+    @@logger_file.sync = true
     @@logger = Logger.new(@@logger_file)
     set_logger_common_options
   end
