@@ -1,15 +1,16 @@
 ROADMAP
 -------
 
-**Version 0.1**
+**Version 0.5**
 
 1. Start writing tests
 
-2. Continue configuration file improvement
+2. Support threaded model
 
-3. Support threaded model
+3. Refactoring...
 
-4. Refactoring...
+4. Memory threshholds. Implementation of statistics. Look into god.
 
+5. Improve shutdown
 
 
