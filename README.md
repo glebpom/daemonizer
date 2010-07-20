@@ -47,11 +47,11 @@ Usage
       workers 4
       log_file "log/daemonizer.log" #relative to Demfile
   
-      prepare do |logger, block|
+      prepare do |block|
         block.call
       end
   
-      start do |logger, worker_id, workers_count|
+      start do |worker_id, workers_count|
         logger.info "Started #{worker_id} from #{workers_count}"
     
         exit = false
@@ -75,7 +75,7 @@ Usage
     end
 
     settings_group do 
-      before_start do |logger, worker_id, workers_count|
+      before_start do |worker_id, workers_count|
         #reconnect to db, etc.
       end
 
@@ -150,5 +150,5 @@ This gem has been created in qik.com for our internal use and then
 the sources were opened for other people to use. All the code in this package 
 has been developed by Gleb Pomykalov. As for the first versions, it was mostly based
  on [http://github.com/kovyrin/loops](loops) code written by Alexey Kovyrin. Now
-most of it is heavily refactored.  The gem is released under the MIT license. For
-more details, see the LICENSE file.
+most of it is heavily refactored. MemoryStats is taken from Phusion Passenger.The gem
+is released under the MIT license. For more details, see the LICENSE file.
