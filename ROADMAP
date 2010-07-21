@@ -1,16 +1,25 @@
 ROADMAP
 -------
 
-**Version 0.5**
+*to beta version
 
-1. Start writing tests
+1. Add :sub_pool to configuration. sub_pool can be defined in pool block and all of them should have the same handler. sub_pool cannot be started or stoped indepentently. This is done for better 
+COW-feature utilization
 
-2. Support threaded model
+2. Supporting different log levels
 
-3. Refactoring...
+3. Add ability to supply statistics in handler.
 
-4. Memory threshholds. Implementation of statistics. Look into god.
+4. Improve shutdown
 
-5. Improve shutdown
+5. Memory threshholds. Implementation of statistics. Look into god.
+
+6. Write documentation with YARD
+
+7. Start writing tests (rspec)
+
+8. Support threaded model
+
+9. Make site (daemonizer.org)
 
 
