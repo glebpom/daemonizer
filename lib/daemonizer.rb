@@ -68,7 +68,11 @@ module Daemonizer
   end
   
   def self.logger
-    @@logger
+    if defined?(@@logger)
+      @@logger
+    else
+      nil
+    end
   end
 
   def self.[](pool)
