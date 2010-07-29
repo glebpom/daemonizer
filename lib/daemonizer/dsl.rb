@@ -16,7 +16,7 @@ class Daemonizer::Dsl
   
   def set_option(option, value = nil, &block)
     @options[:handler_options] ||= {}
-    if value
+    if not value.nil?
       @options[:handler_options][option.to_sym] = Daemonizer::Option.new(option, value)
     elsif block_given?
       @options[:handler_options][option.to_sym] = Daemonizer::Option.new(option, block, true)
