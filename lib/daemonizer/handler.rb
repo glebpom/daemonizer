@@ -32,11 +32,8 @@ module Daemonizer
     end
     
     def prepare(starter, &block)
-      if @prepare
-        @prepare.call(block)
-      else
-        super
-      end
+      @prepare.call(block) if @prepare
+      super
     end
         
     def start

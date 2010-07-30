@@ -85,7 +85,10 @@ module Daemonizer
 
     desc "debug", "Debug pool (do not demonize)"
     def debug(pool_name = nil)
-      puts "You should supply pool_name to debug" if pool_name.nil?
+      if pool_name.nil?
+        puts "You should supply pool_name to debug"
+        exit 1
+      end 
       control_pools_loop(pool_name, "execution ended", true) do |pool|        
         STDOUT.sync = true
         
