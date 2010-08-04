@@ -39,6 +39,12 @@ class Daemonizer::Dsl
     end
   end
 
+  def on_poll(&block)
+    @options[:on_poll] ||= []
+    @options[:on_poll] << block
+  end
+
+
   def not_cow_friendly
     @options[:cow_friendly] = false
   end
@@ -94,6 +100,7 @@ class Daemonizer::Dsl
     options = @options.dup
     options[:handler_options] = @options[:handler_options].dup if @options[:handler_options]
     options[:callbacks] = @options[:callbacks].dup if @options[:callbacks]
+    options[:on_poll] = @options[:on_poll].dup if @options[:on_poll]
     options
   end
 end

@@ -180,6 +180,7 @@ module Daemonizer::Stats
   	#  
   	#  # Search by process name.
   	#  list_processes(:match => 'Passenger FrameworkSpawner')
+  	  	
   	def list_processes(options)
   		if options[:exe]
   			name = options[:exe].sub(/.*\/(.*)/, '\1')

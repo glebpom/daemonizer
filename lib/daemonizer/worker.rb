@@ -1,6 +1,7 @@
 module Daemonizer
   class Worker
     attr_reader :name
+    attr_reader :process_name
     attr_reader :pid
 
     def initialize(name, pm, worker_id, &blk)
@@ -10,6 +11,7 @@ module Daemonizer
       @pm = pm
       @worker_block = blk
       @worker_id = worker_id
+      @process_name = "#{@name} worker: instance #{@worker_id}"
     end
 
     def shutdown?
@@ -34,7 +36,7 @@ module Daemonizer
         Daemonizer.logger.info "Log file reopened after fork"
         normal_exit = false
         begin
-          $0 = "#{@name} worker: instance #{@worker_id}\0"
+          $0 = "#{@process_name}\0"
           @worker_block.call(@worker_id)
           normal_exit = true
           exit(0)

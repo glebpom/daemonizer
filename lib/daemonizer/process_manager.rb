@@ -1,7 +1,6 @@
 module Daemonizer
   class ProcessManager
     def initialize(config)
-      @worker_pools = {}
       @shutdown = false
       @config = config
     end
@@ -10,8 +9,8 @@ module Daemonizer
     def start_workers(&blk)
       raise ArgumentError, "Need a worker block!" unless block_given?
       Daemonizer.logger.info "starting all workers"
-      @worker_pools[@config.pool] = WorkerPool.new(@config.pool, self, &blk)
-      @worker_pools[@config.pool].start_workers(@config.workers)
+      @pool = WorkerPool.new(@config.pool, self, &blk)
+      @pool.start_workers(@config.workers)
     end
 
     def monitor_workers
@@ -20,15 +19,20 @@ module Daemonizer
       Daemonizer.logger.debug 'Starting workers monitoring code...'
       loop do
         Daemonizer.logger.debug "Checking workers' health..."
-        @worker_pools.each do |name, pool|
-          break if shutdown?
-          pool.check_workers
+        break if shutdown?
+        @pool.check_workers
+        
+        @config.on_poll.each do |on_poll|
+          on_poll.call(@pool)
         end
 
         break if shutdown?
         Daemonizer.logger.debug "Sleeping for #{@config.poll_period} seconds..." 
         sleep(@config.poll_period)
       end
+    rescue Exception => e
+      Daemonizer.logger.fatal "Monitor error: #{e.to_s}\n  #{e.backtrace.join("\n  ")}"
+      raise
     ensure
       Daemonizer.logger.debug "Workers monitoring loop is finished, starting shutdown..."
       # Send out stop signals
@@ -51,11 +55,7 @@ module Daemonizer
     def wait_for_workers(seconds)
       seconds.times do
         Daemonizer.logger.debug "Shutting down... waiting for workers to die (we have #{seconds} seconds)..."
-        running_total = 0
-
-        @worker_pools.each do |name, pool|
-          running_total += pool.wait_workers
-        end
+        running_total = @pool.wait_workers
 
         if running_total.zero?
           Daemonizer.logger.debug "All workers are dead. Exiting..."
@@ -69,14 +69,12 @@ module Daemonizer
       return false
     end
 
-    def stop_workers(force = false)
+    def stop_workers(force = false)      
       # Set shutdown flag
       Daemonizer.logger.debug "Stopping workers#{force ? ' (forced)' : ''}..."
 
       # Termination loop
-      @worker_pools.each do |name, pool|
-        pool.stop_workers(force)
-      end
+      @pool.stop_workers(force)
     end
 
     def shutdown?

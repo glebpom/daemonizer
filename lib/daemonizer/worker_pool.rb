@@ -1,12 +1,22 @@
 module Daemonizer
   class WorkerPool
+    MONITOR_VALUE = [:vm_size, :private_dirty_rss, :rss]
+    
     attr_reader :name
+    attr_reader :stats
 
     def initialize(name, pm, &blk)
       @name = name
       @pm = pm
       @worker_block = blk
       @workers = []
+      @stats = ::SimpleStatistics::DataSet.new
+    end
+    
+    def find_worker_by_name(name)
+      @workers.detect do |w|
+        w.process_name.to_s == name.to_s
+      end
     end
 
     def shutdown?
@@ -16,18 +26,38 @@ module Daemonizer
     def start_workers(number)
       Daemonizer.logger.debug "Creating #{number} workers for #{name} pool..."
       number.times do |i|
-        @workers << Worker.new(name, @pm, i+1, &@worker_block)
+        worker = Worker.new(name, @pm, i+1, &@worker_block)
+        @workers << worker
+        @stats.add_data(worker.process_name)
+        Daemonizer.logger.info "Gathering data for #{worker.name}"    
       end
+    rescue Exception => e
+      Daemonizer.logger.info "Result - #{e.inspect}"
     end
 
     def check_workers
       Daemonizer.logger.debug "Checking loop #{name} workers..."
+
+      Daemonizer::Stats::MemoryStats.new(self).find_workers.each do |p|
+        worker_name = p.name
+        MONITOR_VALUE.each do |value|
+          @stats.tick(value)
+          @stats[worker_name][value].add_probe(p.send(value))
+        end
+      end
+      
       @workers.each do |worker|
-        next if worker.running? || worker.shutdown?
-        Daemonizer.logger.warn "Worker #{worker.name} is not running. Restart!"
-        worker.run
+        unless worker.running? || worker.shutdown?
+          Daemonizer.logger.warn "Worker #{worker.name} is not running. Restart!"
+          @stats.add_data(worker.process_name)
+          MONITOR_VALUE.each do |v|
+            @stats[worker.process_name].reset(v)
+          end
+          worker.run
+        end
       end
     end
+
 
     def wait_workers
       running = 0

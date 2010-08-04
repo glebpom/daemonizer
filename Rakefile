@@ -11,22 +11,36 @@ begin
     gemspec.homepage = "http://github.com/glebpom/daemonizer"
     gemspec.authors = ["Gleb Pomykalov"]
     gemspec.add_dependency('thor', '>= 0.13.7')
+    gemspec.add_dependency('simple-statistics', '>= 0')
+    gemspec.add_development_dependency "rspec", ">= 1.2.9"
+    gemspec.add_development_dependency "yard", ">= 0"
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
   puts "Jeweler not available. Install it with: gem install jeweler"
 end
 
+require 'spec/rake/spectask'
+Spec::Rake::SpecTask.new(:spec) do |spec|
+  spec.libs << 'lib' << 'spec'
+  spec.spec_files = FileList['spec/**/*_spec.rb']
+end
+
+Spec::Rake::SpecTask.new(:rcov) do |spec|
+  spec.libs << 'lib' << 'spec'
+  spec.pattern = 'spec/**/*_spec.rb'
+  spec.rcov = true
+end
+
+task :spec => :check_dependencies
+
+task :default => :spec
+
 begin
   require 'yard'
-  YARD::Rake::YardocTask.new(:yard) do |t|
-    t.options = ['--title', 'Daemonizer Documentation']
-    if ENV['PRIVATE']
-      t.options.concat ['--protected', '--private']
-    else
-      t.options.concat ['--protected', '--no-private']
-    end
-  end
+  YARD::Rake::YardocTask.new
 rescue LoadError
-  puts 'Yard not available. Install it with: sudo gem install yard'
+  task :yardoc do
+    abort "YARD is not available. In order to run yardoc, you must: sudo gem install yard"
+  end
 end
