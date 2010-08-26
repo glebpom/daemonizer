@@ -5,6 +5,7 @@ require 'pathname'
 require 'logger'
 require 'simple-statistics'
 
+
 module Daemonizer
   
   def self.root=(value)
