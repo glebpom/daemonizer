@@ -20,9 +20,19 @@ module Daemonizer
     end
   end
 
+  def self.find_daemonfile(daemonfile_name)
+    previous = nil
+    current  = File.expand_path(Dir.pwd)
+
+    until !File.directory?(current) || current == previous
+      filename = File.join(current, daemonfile_name)
+      return filename if File.file?(filename)
+      current, previous = File.expand_path("..", current), current
+    end
+  end
+
   def self.daemonfile=(daemonfile_name)
-    @@daemonfile = File.expand_path(daemonfile_name)
-    @@daemonfile
+    @@daemonfile = find_daemonfile(daemonfile_name)
   end
 
   def self.daemonfile
