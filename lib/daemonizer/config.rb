@@ -1,5 +1,7 @@
 module Daemonizer
   class Config
+    VALID_LOG_LEVELS = [:debug, :info, :warn, :error, :fatal]
+
     class ConfigError < StandardError;  end
 
     attr_reader :pool, :handler
@@ -34,8 +36,9 @@ module Daemonizer
       @options[:callbacks] ||= {}
       @options[:on_poll] ||= []
       @options[:cow_friendly] = true if @options[:cow_friendly].nil?
+      @options[:log_level] ||= :info
     end
-    
+
     def validate_file(filename)
       # file validation
       if File.exist?(filename)
@@ -56,6 +59,7 @@ module Daemonizer
     def validate
       raise ConfigError, "Workers count should be more then zero" if @options[:workers] < 1
       raise ConfigError, "Poll period should be more then zero" if @options[:poll_period] < 1
+      raise ConfigError, "Log level should be one of [#{VALID_LOG_LEVELS.map(&:to_s).join(',')}]" unless VALID_LOG_LEVELS.include?(@options[:log_level].to_sym)
       if @options[:handler]
         raise ConfigError, "Handler should be a class" unless @options[:handler].is_a?(Class)
         raise ConfigError, "Handler should respond to :start" unless @options[:handler].public_instance_methods.include?('start')
@@ -67,6 +71,7 @@ module Daemonizer
         raise ConfigError, "start should be set" if @options[:start].nil?
         raise ConfigError, "start should have block" unless @options[:start].is_a?(Proc)
       end
+
       validate_file(self.log_file)
       validate_file(self.pid_file)
     end
@@ -82,7 +87,7 @@ module Daemonizer
         File.join(Daemonizer.root, @options[method.to_sym])
       end
     end
-    
+
     def name
       @pool
     end

@@ -13,7 +13,7 @@ class Daemonizer::Dsl
     @pool     = :default
     @configs  = {}
   end
-  
+
   def set_option(option, value = nil, &block)
     @options[:handler_options] ||= {}
     if not value.nil?
@@ -24,7 +24,7 @@ class Daemonizer::Dsl
       raise DslError, "you should supply block or value to :set_option"
     end
   end
-  
+
   CALLBACKS = [:before_prepare, :after_prepare, :before_start]
   def set_callback(callback, &block)
     return unless CALLBACKS.include?(callback.to_sym)
@@ -32,11 +32,15 @@ class Daemonizer::Dsl
     @options[:callbacks][callback.to_sym] ||= []
     @options[:callbacks][callback.to_sym] << block
   end
-  
+
   CALLBACKS.each do |callback|
     define_method callback.to_sym do |&block|
       set_callback callback.to_sym, &block
     end
+  end
+
+  def log_level(level)
+    @options[:log_level] = level.to_sym
   end
 
   def on_poll(&block)
@@ -48,31 +52,31 @@ class Daemonizer::Dsl
   def not_cow_friendly
     @options[:cow_friendly] = false
   end
-    
+
   def handler(handler)
     @options[:handler] = handler
   end
-      
+
   def poll_period(seconds)
     @options[:poll_period] = seconds.to_i
   end
-  
+
   def log_file(log)
     @options[:log_file] = log
   end
-  
+
   def workers(num)
     @options[:workers] = num.to_i
   end
-    
+
   def prepare(&blk)
     @options[:prepare] = blk
   end
-  
+
   def start(&blk)
     @options[:start] = blk
   end
-  
+
   def pid_file(pid)
     @options[:pid_file] = pid
   end
@@ -95,7 +99,7 @@ class Daemonizer::Dsl
     @options = options
     @pool = nil
   end
-  
+
   def config_copy
     options = @options.dup
     options[:handler_options] = @options[:handler_options].dup if @options[:handler_options]

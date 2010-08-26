@@ -1,7 +1,7 @@
 require 'thor'
 require 'rubygems/config_file'
 
-module Daemonizer  
+module Daemonizer
   class CLI < Thor
     check_unknown_options!
 
@@ -11,7 +11,7 @@ module Daemonizer
       super
       Daemonizer.daemonfile = options[:daemonfile] || "Daemonfile"
     end
-                
+
     desc "start", "Start pool"
     def start(pool_name = nil)
       control_pools_loop(pool_name, "successfully started") do |pool|
@@ -24,7 +24,7 @@ module Daemonizer
         print_pool pool.name,  "Starting pool"
 
         app_name = "#{pool.name} monitor\0"
-        
+
         Daemonize.daemonize(app_name)
 
         Dir.chdir(Daemonizer.root) # Make sure we're in the working directory
@@ -41,7 +41,7 @@ module Daemonizer
       end
       return true
     end
-    
+
     desc "stop", "Stop pool"
     def stop(pool_name = nil)
       control_pools_loop(pool_name, "successfully stoped") do |pool|
@@ -69,9 +69,9 @@ module Daemonizer
     desc "list", "List of pools"
     def list
       puts "List of configured pools:"
-      puts "" 
+      puts ""
       Daemonizer.find_pools(nil).each do |pool|
-        puts "  * #{pool.name}" 
+        puts "  * #{pool.name}"
       end
       puts ""
       return true
@@ -88,19 +88,19 @@ module Daemonizer
       if pool_name.nil?
         puts "You should supply pool_name to debug"
         exit 1
-      end 
-      control_pools_loop(pool_name, "execution ended", true) do |pool|        
+      end
+      control_pools_loop(pool_name, "execution ended", true) do |pool|
         STDOUT.sync = true
-        
+
         engine = Engine.new(pool)
         engine.debug!
-        
+
         print_pool pool.name,  " Done!"
         exit(0)
       end
-      return true    
+      return true
     end
-    
+
     desc "stats", "Pools statistics"
     def stats(pool_name = nil)
       Daemonizer.find_pools(pool_name).each do |pool|
@@ -108,29 +108,31 @@ module Daemonizer
         statistics.print
       end
     end
-    
+
   private
     def control_pools_loop(pool_name, message = nil, debug = false, &block)
-      Daemonizer.find_pools(pool_name).each do |pool|
-        Process.fork do
-          if debug
-            Daemonizer.init_console_logger(pool.name.to_s)
-          else
-            Daemonizer.init_logger(pool.name.to_s, pool.log_file)
-          end
-          yield(pool)
-        end
+      if debug
+        pool = Daemonizer.find_pools(pool_name).first
+        Daemonizer.init_console_logger(pool.name.to_s)
         begin
-          Process.wait
-          if $?.exitstatus == 0 and message
-            print_pool pool.name, message 
-          end
+          yield(pool)
         rescue Interrupt => e
           puts "Interrupted from keyboard"
         end
+      else
+        Daemonizer.find_pools(pool_name).each do |pool|
+          Process.fork do
+            Daemonizer.init_logger(pool.name.to_s, pool.log_file)
+            yield(pool)
+          end
+          Process.wait
+          if $?.exitstatus == 0 and message
+            print_pool pool.name, message
+          end
+        end
       end
     end
-    
+
     def print_pool(pool_name, message)
       puts "#{pool_name}: #{message}"
     end
