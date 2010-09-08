@@ -1,8 +1,10 @@
 #!/usr/bin/env ruby
+require 'rubygems'
+
 $:.unshift(File.dirname(__FILE__) + '/../lib') unless $:.include?(File.dirname(__FILE__) + '/../lib')
 
 require File.dirname(__FILE__) + '/../lib/daemonizer'
 
-$thor_runner = false 
+$thor_runner = false
 
 Daemonizer::CLI.start
