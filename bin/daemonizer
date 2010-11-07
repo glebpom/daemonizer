@@ -1,6 +1,12 @@
 #!/usr/bin/env ruby
 require 'rubygems'
 
+if File.exists? File.join(File.dirname(__FILE__), 'Gemfile')
+  # This project has a Gemfile also, let's require bundler
+  # to make sure our Gem's don't clash.
+  require "bundler/setup"
+end
+
 $:.unshift(File.dirname(__FILE__) + '/../lib') unless $:.include?(File.dirname(__FILE__) + '/../lib')
 
 require File.dirname(__FILE__) + '/../lib/daemonizer'
