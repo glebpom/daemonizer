@@ -84,7 +84,7 @@ module Daemonizer
 
     [:log_file, :pid_file].each do |method|
       define_method method do
-        File.join(Daemonizer.root, @options[method.to_sym])
+        File.expand_path(@options[method.to_sym], Daemonizer.root)
       end
     end
 
