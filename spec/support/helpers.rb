@@ -1,6 +1,7 @@
 module Spec
   module Helpers
     def reset!
+      kill_if_running!
       FileUtils.rm_rf(app_root)
       FileUtils.mkdir_p(app_root)
     end
@@ -34,6 +35,27 @@ module Spec
 
       puts @err unless expect_err || @err.empty? || !$show_err
       @out
+    end
+
+    def kill_if_running!
+      Dir["#{tmp_dir}/**/*.pid"].each do |pid_file|
+        pid = File.read(pid_file).chomp
+        if pid.to_i > 0
+          puts "Warning: Daemonizer was not properly stopped. Stop it in after block. Killing #{pid.to_i}"
+          Process.kill("KILL", pid.to_i) rescue true
+        end
+      end
+    end
+
+    def daemonizer_runned?(pid_file)
+      pid = File.read(pid_file).chomp.to_i
+      if pid.to_i > 0
+        return !!Process.kill(0, pid.to_i)
+      else
+        return false
+      end
+    rescue Errno::ESRCH, Errno::ECHILD, Errno::EPERM
+      false
     end
 
     extend self

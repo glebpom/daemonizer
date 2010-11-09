@@ -32,6 +32,7 @@ RSpec.configure do |config|
   end
 
   config.after :each do
+    reset!
     Dir.chdir(original_wd)
   end
 end
