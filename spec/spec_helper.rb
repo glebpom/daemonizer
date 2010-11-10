@@ -18,6 +18,7 @@ FileUtils.rm_rf(Spec::Path.app_root)
 RSpec.configure do |config|
   config.include Spec::Helpers
   config.include Spec::Path
+  config.include Spec::DaemonfileFactory
 
   config.filter_run :focused => true
   config.run_all_when_everything_filtered = true
@@ -32,7 +33,6 @@ RSpec.configure do |config|
   end
 
   config.after :each do
-    reset!
     Dir.chdir(original_wd)
   end
 end
