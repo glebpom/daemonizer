@@ -7,8 +7,10 @@ describe "daemonzier after start" do
              :name => :test1,
              :pid_file =>"#{tmp_dir}/test1.pid",
              :on_start => "loop { sleep 1 }",
-             :workers => 3)
+             :workers => 3,
+             :poll_period => 1)
     daemonizer :start
+    sleep 5
   end
 
   after :each do
@@ -16,9 +18,18 @@ describe "daemonzier after start" do
   end
 
   it "should create 3 forks" do
-    #should sleep here
-    sleep 3
-    children_count(File.read(@pid_files[0]).chomp).should == 3
+    children_count(pid(@pid_files[0])).should == 3
+  end
+
+  describe "after one worker died" do
+    before :each do
+      Process.kill("KILL", children_pids(pid(@pid_files[0])).first.to_i)
+      sleep 5
+    end
+
+    it "should restore it" do
+      children_count(pid(@pid_files[0])).should == 3
+    end
   end
 
 end

@@ -8,7 +8,7 @@ module Spec
         code << <<EOF
 pool :#{pool[:name]} do
   workers #{pool[:workers] || 1}
-  poll_period 5
+  poll_period #{pool[:poll_period] || 1}
   log_file "test.log"
   pid_file "#{pool[:pid_file]}"
 
