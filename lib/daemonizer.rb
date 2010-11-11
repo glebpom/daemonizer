@@ -100,7 +100,7 @@ module Daemonizer
   end
 
   def self.find_pools(pool_name = nil)
-    pools = Dsl.evaluate(daemonfile)
+    pools = Dsl.evaluate(File.read(daemonfile.to_s), daemonfile.to_s).process
 
     if pool_name
       if pool = pools[pool_name.to_sym]
