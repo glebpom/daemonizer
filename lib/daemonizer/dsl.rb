@@ -1,10 +1,22 @@
 class Daemonizer::DslError < StandardError; end
 
 class Daemonizer::Dsl
-  def self.evaluate(gemfile)
+  def self.evaluate(daemonfile, daemonfile_name = 'Daemonfile')
     builder = new
-    builder.instance_eval(File.read(gemfile.to_s), gemfile.to_s, 1)
-    builder.instance_variable_get("@configs")
+    builder.instance_eval(daemonfile, daemonfile_name.to_s, 1)
+    builder
+  end
+
+  def configs
+    @configs
+  end
+
+  def process
+    result = {}
+    @configs.each do |k,v|
+      result[k] = Daemonizer::Config.new(k, v)
+    end
+    result
   end
 
   def initialize
@@ -92,7 +104,8 @@ class Daemonizer::Dsl
     @pool = name.to_sym
     options = config_copy
     yield
-    @configs[@pool] = Daemonizer::Config.new(@pool, @options)
+    @configs[@pool] = @options.clone
+#    @configs[@pool] = Daemonizer::Config.new(@pool, @options)
   rescue Daemonizer::Config::ConfigError => e
     puts "* Error in pool \"#{@pool}\": #{e.to_s}. Skipping..."
   ensure
