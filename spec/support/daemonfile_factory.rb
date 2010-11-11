@@ -7,7 +7,7 @@ module Spec
         end
         code << <<EOF
 pool :#{pool[:name]} do
-  workers 1
+  workers #{pool[:workers] || 1}
   poll_period 5
   log_file "test.log"
   pid_file "#{pool[:pid_file]}"
@@ -18,8 +18,8 @@ pool :#{pool[:name]} do
   end
 
   start do |worker_id, workers_count|
-     #{pool[:on_start]}
     trap("TERM") { exit 0; }
+     #{pool[:on_start]}
   end
 end
 

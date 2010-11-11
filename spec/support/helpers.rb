@@ -42,7 +42,8 @@ module Spec
         pid = File.read(pid_file).chomp
         if pid.to_i > 0
           puts "Warning: Daemonizer was not properly stopped. Stop it in after block. Killing #{pid.to_i}"
-          Process.kill("KILL", pid.to_i) rescue true
+          Process.kill("TERM", pid.to_i) rescue true
+          sleep 5
         end
       end
     end

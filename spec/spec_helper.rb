@@ -19,6 +19,7 @@ RSpec.configure do |config|
   config.include Spec::Helpers
   config.include Spec::Path
   config.include Spec::DaemonfileFactory
+  config.include Spec::Processes
 
   config.filter_run :focused => true
   config.run_all_when_everything_filtered = true
