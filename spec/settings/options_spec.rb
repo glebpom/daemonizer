@@ -2,6 +2,28 @@ require "spec_helper"
 
 class OptionsSpecHandler < SpecHandler; end
 
+describe "set_option in Daemonfile" do
+  it "should initialize simple setting correctly" do
+    Daemonizer::Option.should_receive(:new).with(:simple, "simple_value")
+    Daemonizer::Dsl.evaluate(<<-G)
+      pool :test do
+        set_option :simple, "simple_value"
+      end
+    G
+  end
+
+  it "should initialize block setting correctly" do
+    Daemonizer::Option.should_receive(:new).with(:lambda, kind_of(Proc), true)
+    Daemonizer::Dsl.evaluate(<<-G)
+      pool :test do
+        set_option :lambda do
+          "lambda_value"
+        end
+      end
+    G
+  end
+end
+
 describe "pool options in Daemonizer::Config" do
   context "with name and value" do
     before :each do
