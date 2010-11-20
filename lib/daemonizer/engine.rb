@@ -2,7 +2,7 @@ module Daemonizer
   class Engine
     attr_reader :config
 
-    def initialize(config, debug = false)
+    def initialize(config)
       @config = config
       Daemonizer.logger_context = "#{Process.pid}/monitor"
     end
