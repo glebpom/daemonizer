@@ -6,7 +6,7 @@ class OptionsSpecHandler < Daemonizer::Handler
     @workers_count = 1
     super
   end
-  
+
   def prepare(starter, &block)
 
   end
@@ -19,7 +19,7 @@ end
 describe "pool options in Daemonizer::Config" do
   context "with name and value" do
     before :each do
-      @handler = Daemonizer::Config.new(:pool, {
+      @handler = Daemonizer::Engine.new(Daemonizer::Config.new(:pool, {
                 :workers => 1,
                 :pid_file =>"#{tmp_dir}/test1.pid",
                 :log_file =>"#{tmp_dir}/test1.log",
@@ -29,7 +29,7 @@ describe "pool options in Daemonizer::Config" do
                     :block => Daemonizer::Option.new(:block, lambda { "block_value" }, true)
                  },
                 :handler => OptionsSpecHandler
-      }).handler.start
+      })).run_start_with_callbacks
     end
 
     it "should return simple option" do
