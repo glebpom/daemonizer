@@ -38,3 +38,19 @@ RSpec.configure do |config|
     Dir.chdir(original_wd)
   end
 end
+
+class SpecHandler < Daemonizer::Handler
+  def initialize(*args)
+    @worker_id = 1
+    @workers_count = 1
+    super
+  end
+
+  def prepare(starter, &block)
+
+  end
+
+  def start
+    self
+  end
+end

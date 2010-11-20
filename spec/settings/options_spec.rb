@@ -1,20 +1,6 @@
 require "spec_helper"
 
-class OptionsSpecHandler < Daemonizer::Handler
-  def initialize(*args)
-    @worker_id = 1
-    @workers_count = 1
-    super
-  end
-
-  def prepare(starter, &block)
-
-  end
-
-  def start
-    self
-  end
-end
+class OptionsSpecHandler < SpecHandler; end
 
 describe "pool options in Daemonizer::Config" do
   context "with name and value" do
