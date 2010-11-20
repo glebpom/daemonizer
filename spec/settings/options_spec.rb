@@ -4,7 +4,7 @@ class OptionsSpecHandler < SpecHandler; end
 
 describe "set_option in Daemonfile" do
   it "should initialize simple setting correctly" do
-    Daemonizer::Option.should_receive(:new).with(:simple, "simple_value")
+    Daemonizer::Option.expects(:new).with(:simple, "simple_value").once
     Daemonizer::Dsl.evaluate(<<-G)
       pool :test do
         set_option :simple, "simple_value"
@@ -13,7 +13,7 @@ describe "set_option in Daemonfile" do
   end
 
   it "should initialize block setting correctly" do
-    Daemonizer::Option.should_receive(:new).with(:lambda, kind_of(Proc), true)
+    Daemonizer::Option.expects(:new).with(:lambda, kind_of(Proc), any_of(true, nil)).once
     Daemonizer::Dsl.evaluate(<<-G)
       pool :test do
         set_option :lambda do

@@ -59,6 +59,12 @@ module Spec
       false
     end
 
+    def stubs_logger
+      logger = stubs(:logger)
+      logger.stubs(:info).returns(true)
+      Daemonizer.stubs(:logger).returns(logger)
+    end
+
     extend self
   end
 end
