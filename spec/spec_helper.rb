@@ -26,6 +26,7 @@ RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
   config.alias_example_to :fit, :focused => true
 
+  config.mock_with :mocha
 
   original_wd = Dir.pwd
 
@@ -36,5 +37,21 @@ RSpec.configure do |config|
 
   config.after :each do
     Dir.chdir(original_wd)
+  end
+end
+
+class SpecHandler < Daemonizer::Handler
+  def initialize(*args)
+    @worker_id = 1
+    @workers_count = 1
+    super
+  end
+
+  def prepare(starter, &block)
+    super
+  end
+
+  def start
+    self
   end
 end

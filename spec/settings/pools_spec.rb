@@ -36,8 +36,8 @@ describe "Evaluating pool settings through dsl" do
 
   it "should process pool definition on call Daemonizer::Dsl#process" do
     pool_config = Daemonizer::Config
-    pool_config.should_receive(:new).with(:pool2, equal(@configuration[:pool2])).once
-    pool_config.should_receive(:new).with(:pool1, equal(@configuration[:pool1])).once
+    pool_config.expects(:new).with(:pool2, equals(@configuration[:pool2])).once
+    pool_config.expects(:new).with(:pool1, equals(@configuration[:pool1])).once
     @processed_config = @dsl.process
   end
 end

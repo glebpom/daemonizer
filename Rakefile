@@ -11,8 +11,9 @@ begin
     gemspec.homepage = "http://github.com/glebpom/daemonizer"
     gemspec.authors = ["Gleb Pomykalov"]
     gemspec.add_dependency('thor', '>= 0.13.7')
-    gemspec.add_dependency('simple-statistics', '>= 0')
-    gemspec.add_development_dependency "rspec", ">= 1.2.9"
+    gemspec.add_dependency('simple-statistics', '>=0.0.3')
+    gemspec.add_development_dependency "rspec", ">=2.1.0"
+    gemspec.add_development_dependency "mocha", ">=0.9.9"
     gemspec.add_development_dependency "yard", ">= 0"
   end
   Jeweler::GemcutterTasks.new
