@@ -22,6 +22,18 @@ describe "set_option in Daemonfile" do
       end
     G
   end
+
+  it "should correctly set option_handlers" do
+    @eval = Daemonizer::Dsl.evaluate(<<-G)
+      pool :test do
+        set_option :option1, "option1_value"
+        set_option :option2, "option1_value"
+        set_option :option3, "option1_value"
+      end
+    G
+    @eval.configs[:test][:handler_options].should be_kind_of(Hash)
+    @eval.configs[:test][:handler_options].size.should == 3
+  end
 end
 
 describe "pool options in Daemonizer::Config" do
