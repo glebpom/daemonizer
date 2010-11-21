@@ -67,20 +67,20 @@ describe "callbacks in Daemonizer::Config" do
     @engine_state = states('engine_state').starts_as('pending')
   end
 
-  it "should work in correct order" do
+  it "should work in correct order with many callbacks" do
     @before_prepare = mock('before_prepare')
-    @before_prepare.expects('touch').when(@engine_state.is('pending')).once.then(@engine_state.is('before_prepare_invoked'))
+    @before_prepare.expects('touch').when(@engine_state.is('pending')).twice
 
     @after_prepare = mock('after_prepare')
-    @after_prepare.expects('touch').when(@engine_state.is('prepare_invoked')).once.then(@engine_state.is('after_prepare_invoked'))
+    @after_prepare.expects('touch').when(@engine_state.is('prepare_invoked')).twice
 
     @before_start = mock('before_start')
-    @before_start.expects('touch').when(@engine_state.is('after_prepare_invoked')).once.then(@engine_state.is('before_start_invoked'))
+    @before_start.expects('touch').when(@engine_state.is('after_prepare_invoked')).twice
 
     @callbacks = {
-      :before_prepare => [ Proc.new { @before_prepare.touch } ],
-      :after_prepare =>  [ Proc.new { @after_prepare.touch }  ],
-      :before_start =>   [ Proc.new { @before_start.touch }   ]
+      :before_prepare => [ Proc.new { @before_prepare.touch }, Proc.new { @before_prepare.touch; @engine_state.become('before_prepare_invoked') } ],
+      :after_prepare =>  [ Proc.new { @after_prepare.touch }, Proc.new { @after_prepare.touch; @engine_state.become('after_prepare_invoked') }  ],
+      :before_start =>   [ Proc.new { @before_start.touch }, Proc.new { @before_start.touch; @engine_state.become('before_start_invoked') } ]
     }
 
     @engine = Daemonizer::Engine.new(Daemonizer::Config.new(:pool, {
