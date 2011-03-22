@@ -87,11 +87,33 @@ describe Daemonizer::Option do
         end
       end
       context "and handler defined" do
-        it do
-          Daemonizer::Option.new(:option, lambda { "lambda" }, true).
-            value(OptionsSpecHandler.new).
-            should == "lambda"
+        context "with arity == 0" do
+          it do
+            Daemonizer::Option.new(:option, lambda { "lambda" }, true).
+              value(OptionsSpecHandler.new).
+              should == "lambda"
+          end
         end
+
+        context "with arity == 2" do
+          it do
+            Daemonizer::Option.new(:option, lambda { |worker_id, workers_count| "#{worker_id}/#{workers_count}" }, true).
+              value(OptionsSpecHandler.new).
+              should == "1/1"
+          end
+        end
+
+        context "with arity == 1" do
+
+          it do
+            lambda {
+              Daemonizer::Option.new(:option, lambda { |worker_id| "lambda" }, true).
+              value(OptionsSpecHandler.new)
+            }.should raise_error(Daemonizer::Option::OptionError)
+          end
+
+        end
+
       end
     end
   end
@@ -110,6 +132,5 @@ describe Daemonizer::Option do
       end
     end
   end
-
 
 end
