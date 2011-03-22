@@ -15,7 +15,6 @@ begin
     gemspec.add_development_dependency "rspec", ">=2.1.0"
     gemspec.add_development_dependency "mocha", ">=0.9.9"
     gemspec.add_development_dependency "yard", ">= 0"
-    gemspec.add_development_dependency "rcov", ">= 0.9.9"
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
