@@ -10,7 +10,7 @@ describe "daemonzier after start" do
              :workers => 3,
              :poll_period => 1)
     daemonizer :start
-    sleep 5
+    sleep 8
   end
 
   after :each do
