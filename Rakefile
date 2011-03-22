@@ -15,6 +15,7 @@ begin
     gemspec.add_development_dependency "rspec", ">=2.1.0"
     gemspec.add_development_dependency "mocha", ">=0.9.9"
     gemspec.add_development_dependency "yard", ">= 0"
+    gemspec.add_development_dependency "rcov", ">= 0.9.9"
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
@@ -25,6 +26,12 @@ require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new do |t|
   t.rspec_opts = %w(-fs --color)
   t.ruby_opts  = %w(-w)
+end
+
+desc  "Run all specs with rcov"
+RSpec::Core::RakeTask.new(:rcov => :spec) do |t|
+  t.rcov = true
+  t.rcov_opts = %w{--exclude gems\/,spec\/}
 end
 
 task :spec => :check_dependencies
