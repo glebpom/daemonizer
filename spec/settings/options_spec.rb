@@ -34,6 +34,16 @@ describe "set_option in Daemonfile" do
     @eval.configs[:test][:handler_options].should be_kind_of(Hash)
     @eval.configs[:test][:handler_options].size.should == 3
   end
+
+  it "should raise DslError if nothing provided to set_option" do
+    lambda {
+      Daemonizer::Dsl.evaluate(<<-G)
+        pool :test do
+          set_option :option1, nil
+        end
+      G
+    }.should raise_error Daemonizer::Dsl::DslError
+  end
 end
 
 describe "pool options in Daemonizer::Config" do

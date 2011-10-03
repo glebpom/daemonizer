@@ -1,6 +1,6 @@
-class Daemonizer::DslError < StandardError; end
-
 class Daemonizer::Dsl
+  class DslError < StandardError; end
+
   def self.evaluate(daemonfile, daemonfile_name = 'Daemonfile')
     builder = new
     builder.instance_eval(daemonfile, daemonfile_name.to_s, 1)
