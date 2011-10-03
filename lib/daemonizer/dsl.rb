@@ -1,6 +1,6 @@
-class Daemonizer::DslError < StandardError; end
-
 class Daemonizer::Dsl
+  class DslError < StandardError; end
+
   def self.evaluate(gemfile)
     builder = new
     builder.instance_eval(File.read(gemfile.to_s), gemfile.to_s, 1)
