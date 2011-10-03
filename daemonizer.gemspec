@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{daemonizer}
-  s.version = "0.4.17"
+  s.version = "0.4.16"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Gleb Pomykalov"]
@@ -40,14 +40,17 @@ Gem::Specification.new do |s|
     "lib/daemonizer/stats.rb",
     "lib/daemonizer/worker.rb",
     "lib/daemonizer/worker_pool.rb",
-    "spec/spec_helper.rb"
+    "spec/spec.opts",
+    "spec/spec_helper.rb",
+    "spec/test_spec.rb"
   ]
   s.homepage = %q{http://github.com/glebpom/daemonizer}
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.5.3}
   s.summary = %q{Daemonizer allows you to easily create custom daemons on ruby. Supporting prefork model}
   s.test_files = [
-    "spec/spec_helper.rb"
+    "spec/spec_helper.rb",
+    "spec/test_spec.rb"
   ]
 
   if s.respond_to? :specification_version then
@@ -55,22 +58,19 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<thor>, [">= 0.13.7"])
-      s.add_runtime_dependency(%q<simple-statistics>, [">= 0.0.3"])
-      s.add_development_dependency(%q<rspec>, [">= 2.1.0"])
-      s.add_development_dependency(%q<mocha>, [">= 0.9.9"])
+      s.add_runtime_dependency(%q<simple-statistics>, [">= 0"])
+      s.add_development_dependency(%q<rspec>, [">= 1.2.9"])
       s.add_development_dependency(%q<yard>, [">= 0"])
     else
       s.add_dependency(%q<thor>, [">= 0.13.7"])
-      s.add_dependency(%q<simple-statistics>, [">= 0.0.3"])
-      s.add_dependency(%q<rspec>, [">= 2.1.0"])
-      s.add_dependency(%q<mocha>, [">= 0.9.9"])
+      s.add_dependency(%q<simple-statistics>, [">= 0"])
+      s.add_dependency(%q<rspec>, [">= 1.2.9"])
       s.add_dependency(%q<yard>, [">= 0"])
     end
   else
     s.add_dependency(%q<thor>, [">= 0.13.7"])
-    s.add_dependency(%q<simple-statistics>, [">= 0.0.3"])
-    s.add_dependency(%q<rspec>, [">= 2.1.0"])
-    s.add_dependency(%q<mocha>, [">= 0.9.9"])
+    s.add_dependency(%q<simple-statistics>, [">= 0"])
+    s.add_dependency(%q<rspec>, [">= 1.2.9"])
     s.add_dependency(%q<yard>, [">= 0"])
   end
 end
