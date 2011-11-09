@@ -1,10 +1,10 @@
+require 'daemonizer/version'
 require 'rubygems'
 require 'yaml'
 require 'erb'
 require 'pathname'
 require 'logger'
 require 'simple-statistics'
-
 
 module Daemonizer
 
