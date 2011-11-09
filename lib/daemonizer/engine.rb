@@ -96,6 +96,11 @@ module Daemonizer
         trap('TERM', stop)
         trap('INT', stop)
         trap('EXIT', stop)
+
+        trap('SIGHUP') do
+          Daemonizer.reopen_log_file
+          @pm.send_signal_to_workers('SIGHUP')
+        end
       end
 
   end

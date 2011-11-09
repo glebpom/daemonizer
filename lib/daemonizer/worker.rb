@@ -28,11 +28,13 @@ module Daemonizer
         STDIN.reopen '/dev/null'
         STDOUT.reopen '/dev/null', 'a'
         STDERR.reopen STDOUT
-        
+
+        setup_signals
+
         @pid = Process.pid
         Daemonizer.reopen_log_file
         Daemonizer.logger_context = "#{@pid}/#{@worker_id}"
-        
+
         Daemonizer.logger.info "Log file reopened after fork"
         normal_exit = false
         begin
@@ -78,6 +80,18 @@ module Daemonizer
         Process.kill(sig, @pid)
       rescue Errno::ESRCH, Errno::ECHILD, Errno::EPERM=> e
         Daemonizer.logger.error("Exception from kill: #{e} at #{e.backtrace.first}")
+      end
+    end
+
+    def send_signal(signal)
+      Process.kill(signal, @pid)
+    end
+
+    private
+
+    def setup_signals
+      trap('SIGHUP') do
+        Daemonizer.reopen_log_file
       end
     end
   end

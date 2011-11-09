@@ -122,7 +122,7 @@ module Daemonizer
       else
         Daemonizer.find_pools(pool_name).each do |pool|
           Process.fork do
-            Daemonizer.init_logger(pool.name.to_s, pool.log_file)
+            Daemonizer.init_logger(pool.log_file)
             yield(pool)
           end
           Process.wait

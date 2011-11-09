@@ -21,13 +21,13 @@ module Daemonizer
         Daemonizer.logger.debug "Checking workers' health..."
         break if shutdown?
         @pool.check_workers
-        
+
         @config.on_poll.each do |on_poll|
           on_poll.call(@pool)
         end
 
         break if shutdown?
-        Daemonizer.logger.debug "Sleeping for #{@config.poll_period} seconds..." 
+        Daemonizer.logger.debug "Sleeping for #{@config.poll_period} seconds..."
         sleep(@config.poll_period)
       end
     rescue Exception => e
@@ -69,12 +69,16 @@ module Daemonizer
       return false
     end
 
-    def stop_workers(force = false)      
+    def stop_workers(force = false)
       # Set shutdown flag
       Daemonizer.logger.debug "Stopping workers#{force ? ' (forced)' : ''}..."
 
       # Termination loop
       @pool.stop_workers(force)
+    end
+
+    def send_signal_to_workers(signal)
+      @pool.send_signal_to_workers(signal)
     end
 
     def shutdown?

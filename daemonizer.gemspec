@@ -62,6 +62,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<thor>, [">= 0.13.7"])
       s.add_runtime_dependency(%q<simple-statistics>, [">= 0"])
       s.add_development_dependency(%q<rspec>, [">= 1.2.9"])
+      s.add_development_dependency(%q<mocha>, [">= 0.9.12"])
       s.add_development_dependency(%q<yard>, [">= 0"])
     else
       s.add_dependency(%q<thor>, [">= 0.13.7"])
