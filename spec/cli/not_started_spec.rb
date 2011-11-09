@@ -21,6 +21,21 @@ describe "with Daemonfile and daemonzier is not started " do
     end
   end
 
+  describe "on call 'logrotate'" do
+    before(:each) do
+      daemonizer :logrotate
+    end
+
+    it "should return valid text" do
+      @out.should match(/test1: not started/)
+      @out.should match(/test2: not started/)
+    end
+
+    it "should not return anything to stderr" do
+      @err.should == ''
+    end
+  end
+
   describe "on call 'start'" do
     describe "with all pools" do
       before(:each) do
