@@ -1,7 +1,7 @@
 module Daemonizer
   class WorkerPool
     MONITOR_VALUE = [:vm_size, :private_dirty_rss, :rss]
-    
+
     attr_reader :name
     attr_reader :stats
 
@@ -12,7 +12,7 @@ module Daemonizer
       @workers = []
       @stats = ::SimpleStatistics::DataSet.new
     end
-    
+
     def find_worker_by_name(name)
       @workers.detect do |w|
         w.process_name.to_s == name.to_s
@@ -29,7 +29,7 @@ module Daemonizer
         worker = Worker.new(name, @pm, i+1, &@worker_block)
         @workers << worker
         @stats.add_data(worker.process_name)
-        Daemonizer.logger.info "Gathering data for #{worker.name}"    
+        Daemonizer.logger.info "Gathering data for #{worker.name}"
       end
     rescue Exception => e
       Daemonizer.logger.info "Result - #{e.inspect}"
@@ -45,7 +45,7 @@ module Daemonizer
           @stats[worker_name][value].add_probe(p.send(value))
         end
       end
-      
+
       @workers.each do |worker|
         unless worker.running? || worker.shutdown?
           Daemonizer.logger.warn "Worker #{worker.name} is not running. Restart!"
@@ -74,6 +74,12 @@ module Daemonizer
       @workers.each do |worker|
         next unless worker.running?
         worker.stop(force)
+      end
+    end
+
+    def send_signal_to_workers(signal)
+      @workers.each do |worker|
+        worker.send_signal(signal)
       end
     end
   end
