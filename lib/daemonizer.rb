@@ -1,10 +1,10 @@
+require 'daemonizer/version'
 require 'rubygems'
 require 'yaml'
 require 'erb'
 require 'pathname'
 require 'logger'
 require 'simple-statistics'
-
 
 module Daemonizer
 
@@ -59,7 +59,7 @@ module Daemonizer
     @@log_level ||= :info
   end
 
-  def self.init_logger(name, log_file)
+  def self.init_logger(log_file)
     @@logger_file = File.open(log_file, File::WRONLY | File::APPEND)
     @@logger_file.sync = true
     @@logger = Logger.new(@@logger_file)
@@ -74,7 +74,13 @@ module Daemonizer
   end
 
   def self.reopen_log_file
-    true #do not need it in append-only mode
+    if @@logger_file.respond_to?(:path)
+      log_file = @@logger_file.path
+      f = File.open(log_file, File::WRONLY | File::APPEND | File::CREAT)
+      f.sync = true
+      @@logger_file.reopen(f)
+    end
+    true
   end
 
   def self.flush_logger
@@ -100,7 +106,7 @@ module Daemonizer
   end
 
   def self.find_pools(pool_name = nil)
-    pools = Dsl.evaluate(daemonfile)
+    pools = Dsl.evaluate(File.read(daemonfile.to_s), daemonfile.to_s).process
 
     if pool_name
       if pool = pools[pool_name.to_sym]

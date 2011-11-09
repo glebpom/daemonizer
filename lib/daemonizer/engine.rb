@@ -2,11 +2,11 @@ module Daemonizer
   class Engine
     attr_reader :config
 
-    def initialize(config, debug = false)
+    def initialize(config)
       @config = config
       Daemonizer.logger_context = "#{Process.pid}/monitor"
     end
-    
+
     def run_callback(callback, *args)
       if callbacks = @config.callbacks[callback.to_sym] and callbacks.any?
         Daemonizer.logger.info "Running :#{callback} callbacks"
@@ -15,22 +15,22 @@ module Daemonizer
         end
       end
     end
-    
+
+    def run_prepare_with_callbacks(&block)
+      run_callback :before_prepare, @config.pool
+      Daemonizer.logger.info "Workers count is #{@config.workers}"
+      @config.handler.prepare(block) do
+        run_callback :after_prepare, @config.pool
+      end
+    end
+
+    def run_start_with_callbacks
+      run_callback :before_start, @config.pool, @config.handler.worker_id, @config.handler.workers_count
+      @config.handler.start
+    end
+
     def start!
       @pm = ProcessManager.new(@config)
-
-      init_block = Proc.new do
-        begin
-          @pm.start_workers do |process_id|
-            @config.handler.worker_id = process_id
-            @config.handler.workers_count = @config.workers
-            run_callback :before_start, @config.pool, process_id, @config.workers
-            @config.handler.start
-          end
-        rescue Exception => e
-          log_error(e)
-        end
-      end
 
       begin
         if @config.cow_friendly
@@ -42,16 +42,22 @@ module Daemonizer
           end
         end
         @config.handler.logger = Daemonizer.logger
-        run_callback :before_prepare, @config.pool
-        Daemonizer.logger.info "Workers count is #{config.workers}"
-        @config.handler.prepare(init_block) do
-          run_callback :after_prepare, @config.pool
+        run_prepare_with_callbacks do
+          begin
+            @pm.start_workers do |process_id|
+              @config.handler.worker_id = process_id
+              @config.handler.workers_count = @config.workers
+              run_start_with_callbacks
+            end
+          rescue Exception => e
+            log_error(e)
+          end
         end
       rescue Exception => e
         log_error(e)
       end
       # Start monitoring loop
-      
+
       setup_signals
       @pm.monitor_workers
     end
@@ -59,28 +65,22 @@ module Daemonizer
     def debug!
       Daemonizer.init_console_logger('console')
       @config.handler.logger = Daemonizer.logger
-      
-      init_block = Proc.new do
-        begin
-          @config.handler.worker_id = 1
-          @config.handler.workers_count = 1
-          run_callback :before_start, @config.pool, 1, 1
-          @config.handler.start
-        rescue Exception => e
-          log_error(e)
-        end
-      end
 
       begin
-        run_callback :before_prepare, @config.pool
-        @config.handler.prepare(init_block) do
-          run_callback :after_prepare, @config.pool
+        run_prepare_with_callbacks do
+          begin
+            @config.handler.worker_id = 1
+            @config.handler.workers_count = 1
+            run_start_with_callbacks
+          rescue Exception => e
+            log_error(e)
+          end
         end
       rescue Exception => e
         log_error(e)
       end
     end
-    
+
     def log_error(e)
       Daemonizer.logger.fatal e.to_s
       Daemonizer.logger.fatal "#{e.class}: #{e}\n" + e.backtrace.join("\n")
@@ -96,6 +96,11 @@ module Daemonizer
         trap('TERM', stop)
         trap('INT', stop)
         trap('EXIT', stop)
+
+        trap('SIGHUP') do
+          Daemonizer.reopen_log_file
+          @pm.send_signal_to_workers('SIGHUP')
+        end
       end
 
   end

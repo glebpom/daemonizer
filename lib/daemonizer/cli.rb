@@ -109,6 +109,19 @@ module Daemonizer
       end
     end
 
+    desc "logrotate", "Reopen all log files"
+    def logrotate(pool_name = nil)
+      control_pools_loop(pool_name, "log file reopened") do |pool|
+        # Pid file check
+        unless Daemonize.check_pid(pool.pid_file)
+          print_pool pool.name,  "not started!"
+          exit(1)
+        end
+
+        Process.kill('HUP', Daemonize.read_pid(pool.pid_file))
+      end
+    end
+
   private
     def control_pools_loop(pool_name, message = nil, debug = false, &block)
       if debug
@@ -122,7 +135,7 @@ module Daemonizer
       else
         Daemonizer.find_pools(pool_name).each do |pool|
           Process.fork do
-            Daemonizer.init_logger(pool.name.to_s, pool.log_file)
+            Daemonizer.init_logger(pool.log_file)
             yield(pool)
           end
           Process.wait

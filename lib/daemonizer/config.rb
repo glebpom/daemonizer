@@ -62,7 +62,7 @@ module Daemonizer
       raise ConfigError, "Log level should be one of [#{VALID_LOG_LEVELS.map(&:to_s).join(',')}]" unless VALID_LOG_LEVELS.include?(@options[:log_level].to_sym)
       if @options[:handler]
         raise ConfigError, "Handler should be a class" unless @options[:handler].is_a?(Class)
-        raise ConfigError, "Handler should respond to :start" unless @options[:handler].public_instance_methods.include?('start')
+        raise ConfigError, "Handler should respond to :start" unless @options[:handler].public_instance_methods.map(&:to_sym).include?(:start)
         raise ConfigError, "Handler set. Don't use :start and :before init in Demfile" if @options[:prepare] || @options[:start]
       else
         if @options[:prepare]
@@ -84,7 +84,7 @@ module Daemonizer
 
     [:log_file, :pid_file].each do |method|
       define_method method do
-        File.join(Daemonizer.root, @options[method.to_sym])
+        File.expand_path(@options[method.to_sym], Daemonizer.root)
       end
     end
 
